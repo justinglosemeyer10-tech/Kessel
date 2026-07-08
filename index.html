@@ -395,6 +395,84 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(6px);}
 
+  /* garden */
+  .gold-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 14px;
+    margin-bottom:14px;
+  }
+  .gold-row .gold-label{font-size:0.78rem;color:var(--parchment-dim);text-transform:uppercase;letter-spacing:0.05em;}
+  .gold-row .gold-value{font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:var(--copper-bright);}
+  .gold-steppers{display:flex;gap:6px;}
+  .gold-steppers button{
+    padding:6px 10px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:#1a251c;
+    color:var(--copper-bright);
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.75rem;
+    cursor:pointer;
+  }
+  .plot-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(140px,1fr));
+    gap:10px;
+  }
+  .plot{
+    background:var(--bg-panel-raised);
+    border:1px dashed var(--line);
+    border-radius:8px;
+    padding:12px;
+    min-height:96px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .plot.growing, .plot.ready{border-style:solid;}
+  .plot.ready{border-color:var(--herb-green);}
+  .plot.locked{opacity:0.35;}
+  .plot .plot-state{font-size:0.72rem;color:var(--parchment-dim);}
+  .plot .plot-herb{font-size:0.92rem;color:var(--parchment);margin:2px 0 6px;}
+  .plot button.plant-btn, .plot button.harvest-btn{
+    background:var(--bg-panel-raised);
+    border:1px solid var(--copper);
+    color:var(--copper-bright);
+    padding:6px 8px;
+    border-radius:6px;
+    font-size:0.75rem;
+    cursor:pointer;
+    font-family:'Lora',serif;
+  }
+  .plot button.harvest-btn{background:linear-gradient(180deg,var(--herb-green),#5b7c4d);color:#0e1608;border:none;font-weight:600;}
+  .seed-picker{
+    margin-top:8px;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    max-height:180px;
+    overflow-y:auto;
+  }
+  .seed-picker button{
+    display:flex;
+    justify-content:space-between;
+    background:#1a251c;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+    padding:6px 8px;
+    border-radius:6px;
+    font-size:0.72rem;
+    cursor:pointer;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .seed-picker button:disabled{opacity:0.35;cursor:not-allowed;}
+  .seed-picker button .sname{font-family:'Lora',serif;color:var(--parchment);}
+
   @media (prefers-reduced-motion: reduce){
     .liquid-fill{transition:none;}
     .toast{transition:none;}
@@ -416,6 +494,38 @@
       <h2>Kräuterbestand <span class="count-badge" id="herb-total">0 Kräuter</span></h2>
       <p class="hint">Trag ein, was du gerade besitzt. Das Finden der Kräuter passiert in der echten Welt — hier zählst du nur, was du dabei hast.</p>
       <div class="herb-grid" id="herb-grid"></div>
+    </div>
+  </div>
+
+  <!-- GARTEN -->
+  <div class="view" id="view-garden">
+    <div class="panel">
+      <h2>Garten</h2>
+      <p class="hint">Samen kosten Gold und brauchen Zeit zum Wachsen — auch während du weg bist. Reife Beete musst du selbst ernten.</p>
+      <div class="gold-row">
+        <div>
+          <div class="gold-label">Gold</div>
+          <div class="gold-value" id="gold-value">0</div>
+        </div>
+        <div class="gold-steppers">
+          <button data-gold="-10">−10</button>
+          <button data-gold="-1">−1</button>
+          <button data-gold="1">+1</button>
+          <button data-gold="10">+10</button>
+        </div>
+      </div>
+      <div class="plot-grid" id="plot-grid"></div>
+    </div>
+    <div class="panel">
+      <h2>Gartenmeisterschaft</h2>
+      <div class="mastery-track" id="garden-mastery-track"></div>
+      <p class="hint" id="garden-mastery-text" style="margin-bottom:0;"></p>
+      <div class="mastery-stats">
+        <div class="stat-box"><div class="label">Stufe</div><div class="value" id="gm-level">1 / 10</div></div>
+        <div class="stat-box"><div class="label">Ernten gesamt</div><div class="value" id="gm-harvests">0</div></div>
+        <div class="stat-box"><div class="label">Wachstums-Bonus</div><div class="value" id="gm-speed">−0%</div></div>
+        <div class="stat-box"><div class="label">Beete</div><div class="value" id="gm-plots">4</div></div>
+      </div>
     </div>
   </div>
 
@@ -477,6 +587,7 @@
 
 <nav class="tabs">
   <button data-view="view-herbs" class="active"><span class="icon">🌿</span>Kräuter</button>
+  <button data-view="view-garden"><span class="icon">🌱</span>Garten</button>
   <button data-view="view-brew"><span class="icon">🧪</span>Brauen</button>
   <button data-view="view-storage"><span class="icon">🏺</span>Lager</button>
   <button data-view="view-mastery"><span class="icon">📜</span>Mastery</button>
@@ -501,6 +612,21 @@ const HERBS = [
 ];
 
 const MASTERY_THRESHOLDS = [0,5,12,20,30,42,56,72,90,110]; // cumulative brews needed to REACH level i+1
+
+const SEEDS = {
+  silberkraut:      {cost:5,  minutes:15},
+  goldwurz:         {cost:8,  minutes:20},
+  wasserlilie:      {cost:10, minutes:30},
+  windgras:         {cost:10, minutes:25},
+  erdwurzel:        {cost:12, minutes:35},
+  feuerbluete:      {cost:15, minutes:40},
+  donnerfarn:       {cost:15, minutes:45},
+  eiskristallmoos:  {cost:18, minutes:50},
+  lichtblume:       {cost:25, minutes:70},
+  schattenpilz:     {cost:25, minutes:70},
+};
+const MAX_PLOTS = 13;
+const GARDEN_THRESHOLDS = [0,4,10,18,28,40,54,70,88,108]; // cumulative harvests needed to REACH level i+1
 
 const RECIPES = [
   {id:'kleiner_heiltrank', name:'Kleiner Heiltrank', tier:1, category:'Heilung',
@@ -540,7 +666,10 @@ function loadState(){
     activeBrews: [],
     potions: [],
     totalBrews: 0,
-    character: {level:'', exp:'', life:'', mana:''}
+    character: {level:'', exp:'', life:'', mana:''},
+    gold: 0,
+    plots: new Array(MAX_PLOTS).fill(null),
+    gardenTotalHarvests: 0
   };
 }
 function saveState(){
@@ -549,6 +678,11 @@ function saveState(){
 
 let state = loadState();
 HERBS.forEach(h => { if(!(h.id in state.herbs)) state.herbs[h.id] = 0; });
+if(typeof state.gold !== 'number') state.gold = 0;
+if(!Array.isArray(state.plots)) state.plots = new Array(MAX_PLOTS).fill(null);
+while(state.plots.length < MAX_PLOTS) state.plots.push(null);
+if(typeof state.gardenTotalHarvests !== 'number') state.gardenTotalHarvests = 0;
+let openSeedPickerIndex = null;
 
 /* ============ MASTERY HELPERS ============ */
 function getMasteryLevel(totalBrews){
@@ -569,6 +703,23 @@ function getSlots(level){
   if(level >= 5) return 2;
   return 1;
 }
+
+/* ============ GARDEN MASTERY HELPERS ============ */
+function getGardenLevel(totalHarvests){
+  let level = 1;
+  for(let i=0;i<GARDEN_THRESHOLDS.length;i++){
+    if(totalHarvests >= GARDEN_THRESHOLDS[i]) level = i+1;
+  }
+  return level;
+}
+function getGardenNextThreshold(totalHarvests){
+  const level = getGardenLevel(totalHarvests);
+  if(level >= 10) return null;
+  return GARDEN_THRESHOLDS[level];
+}
+function getGardenSpeedBonus(level){ return (level-1)*2; } // % reduction, same curve as brewing
+function getGardenPlotCount(level){ return Math.min(MAX_PLOTS, 3 + level); } // level1 = 4 plots ... level10 = 13
+function getGardenBonusChance(level){ return (level-1)*3; } // % chance for +1 extra herb on harvest
 
 /* ============ BREW RESOLUTION (works even after app was closed) ============ */
 function resolveFinishedBrews(){
@@ -772,6 +923,165 @@ function renderStorage(){
   });
 }
 
+/* ============ GARDEN ============ */
+function renderGold(){
+  document.getElementById('gold-value').textContent = state.gold;
+}
+
+function plantSeed(plotIndex, herbId){
+  const seed = SEEDS[herbId];
+  if(state.gold < seed.cost) { showToast('Nicht genug Gold'); return; }
+  const level = getGardenLevel(state.gardenTotalHarvests);
+  const speedBonus = getGardenSpeedBonus(level);
+  const adjustedMinutes = Math.round(seed.minutes * (1 - speedBonus/100));
+  const start = Date.now();
+  state.gold -= seed.cost;
+  state.plots[plotIndex] = {
+    herbId,
+    plantedAt: start,
+    readyAt: start + adjustedMinutes*60*1000
+  };
+  openSeedPickerIndex = null;
+  saveState();
+  showToast(HERBS.find(h=>h.id===herbId).name + ' gepflanzt');
+  renderGarden();
+}
+
+function harvestPlot(plotIndex){
+  const plot = state.plots[plotIndex];
+  if(!plot || plot.readyAt > Date.now()) return;
+  const herbId = plot.herbId;
+  state.herbs[herbId] += 1;
+  const level = getGardenLevel(state.gardenTotalHarvests);
+  const bonusChance = getGardenBonusChance(level);
+  let bonus = false;
+  if(Math.random()*100 < bonusChance){
+    state.herbs[herbId] += 1;
+    bonus = true;
+  }
+  state.gardenTotalHarvests += 1;
+  state.plots[plotIndex] = null;
+  saveState();
+  showToast((bonus ? 'Doppelte Ernte: ' : 'Geerntet: ') + HERBS.find(h=>h.id===herbId).name);
+  renderHerbs();
+  renderBrewView();
+  renderGarden();
+}
+
+function renderPlots(){
+  const grid = document.getElementById('plot-grid');
+  grid.innerHTML = '';
+  const level = getGardenLevel(state.gardenTotalHarvests);
+  const unlockedCount = getGardenPlotCount(level);
+  const now = Date.now();
+
+  for(let i=0;i<unlockedCount;i++){
+    const plot = state.plots[i];
+    const div = document.createElement('div');
+
+    if(!plot){
+      div.className = 'plot';
+      if(openSeedPickerIndex === i){
+        const seedButtons = Object.entries(SEEDS).map(([hid, seed]) => {
+          const herb = HERBS.find(h=>h.id===hid);
+          const afford = state.gold >= seed.cost;
+          return `<button data-plant="${i}" data-herbid="${hid}" ${afford ? '' : 'disabled'}>
+            <span class="sname">${herb.name}</span><span>${seed.cost}g · ${seed.minutes}m</span>
+          </button>`;
+        }).join('');
+        div.innerHTML = `
+          <div class="plot-state">Beet ${i+1}</div>
+          <div class="plot-herb">Leer</div>
+          <div class="seed-picker">${seedButtons}</div>`;
+      } else {
+        div.innerHTML = `
+          <div class="plot-state">Beet ${i+1}</div>
+          <div class="plot-herb">Leer</div>
+          <button class="plant-btn" data-open="${i}">Bepflanzen</button>`;
+      }
+    } else if(plot.readyAt <= now){
+      div.className = 'plot ready';
+      const herb = HERBS.find(h=>h.id===plot.herbId);
+      div.innerHTML = `
+        <div class="plot-state">Bereit</div>
+        <div class="plot-herb">${herb.name}</div>
+        <button class="harvest-btn" data-harvest="${i}">Ernten</button>`;
+    } else {
+      div.className = 'plot growing';
+      const herb = HERBS.find(h=>h.id===plot.herbId);
+      const total = plot.readyAt - plot.plantedAt;
+      const elapsed = Math.min(total, now - plot.plantedAt);
+      const pct = total > 0 ? Math.min(100,(elapsed/total)*100) : 100;
+      div.innerHTML = `
+        <div class="plot-state">Wächst — ${formatDuration(plot.readyAt-now)}</div>
+        <div class="plot-herb">${herb.name}</div>
+        <div class="liquid-bar" style="height:8px;"><div class="liquid-fill" style="width:${pct}%"></div></div>`;
+    }
+    grid.appendChild(div);
+  }
+
+  // locked slots preview
+  for(let i=unlockedCount;i<MAX_PLOTS;i++){
+    const div = document.createElement('div');
+    div.className = 'plot locked';
+    div.innerHTML = `<div class="plot-state">Gesperrt</div><div class="plot-herb">Beet ${i+1}</div>`;
+    grid.appendChild(div);
+  }
+
+  grid.querySelectorAll('button[data-open]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openSeedPickerIndex = parseInt(btn.dataset.open,10);
+      renderPlots();
+    });
+  });
+  grid.querySelectorAll('button[data-plant]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      plantSeed(parseInt(btn.dataset.plant,10), btn.dataset.herbid);
+    });
+  });
+  grid.querySelectorAll('button[data-harvest]').forEach(btn => {
+    btn.addEventListener('click', () => harvestPlot(parseInt(btn.dataset.harvest,10)));
+  });
+}
+
+function renderGardenMastery(){
+  const level = getGardenLevel(state.gardenTotalHarvests);
+  const track = document.getElementById('garden-mastery-track');
+  track.innerHTML = '';
+  for(let i=1;i<=10;i++){
+    const seg = document.createElement('div');
+    seg.className = 'seg' + (i <= level ? ' filled' : '');
+    track.appendChild(seg);
+  }
+  const nextThreshold = getGardenNextThreshold(state.gardenTotalHarvests);
+  const text = document.getElementById('garden-mastery-text');
+  if(nextThreshold === null){
+    text.textContent = 'Höchste Gartenmeisterschaft erreicht — alle Beete freigeschaltet.';
+  } else {
+    text.textContent = `${state.gardenTotalHarvests} von ${nextThreshold} Ernten für Stufe ${level+1}.`;
+  }
+  document.getElementById('gm-level').textContent = level + ' / 10';
+  document.getElementById('gm-harvests').textContent = state.gardenTotalHarvests;
+  document.getElementById('gm-speed').textContent = '−' + getGardenSpeedBonus(level) + '%';
+  document.getElementById('gm-plots').textContent = getGardenPlotCount(level);
+}
+
+function renderGarden(){
+  renderGold();
+  renderPlots();
+  renderGardenMastery();
+}
+
+document.querySelectorAll('.gold-steppers button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const delta = parseInt(btn.dataset.gold,10);
+    state.gold = Math.max(0, state.gold + delta);
+    saveState();
+    renderGold();
+    renderPlots();
+  });
+});
+
 /* ============ RENDER: MASTERY ============ */
 function renderMastery(){
   const level = getMasteryLevel(state.totalBrews);
@@ -838,6 +1148,7 @@ document.querySelectorAll('nav.tabs button').forEach(btn => {
 function fullRender(){
   renderHerbs();
   renderBrewView();
+  renderGarden();
   loadCharacterForm();
 }
 fullRender();
@@ -853,6 +1164,7 @@ setInterval(() => {
     renderMastery();
     showToast('Ein Sud ist fertig!');
   }
+  renderPlots(); // updates growth bars / countdowns, ready-state doesn't need a toast since harvest is manual
 }, 1000);
 
 // also resolve immediately when the tab regains focus (covers long absences)
