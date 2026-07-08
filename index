@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Kesselbuch — Alchemie-Werkstatt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#152018;
+    --bg-panel:#1e2c22;
+    --bg-panel-raised:#26372b;
+    --parchment:#ece1c4;
+    --parchment-dim:#c9bd9e;
+    --copper:#c17a3a;
+    --copper-bright:#e0985a;
+    --health:#a8433f;
+    --mana:#7a5c9e;
+    --herb-green:#7fa06f;
+    --line:#3a4a3b;
+    --shadow:rgba(0,0,0,0.45);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% 0%, #1c2b21 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 100%, #1a2a1e 0%, transparent 50%),
+      var(--bg-deep);
+    color:var(--parchment);
+    font-family:'Lora', serif;
+    min-height:100vh;
+    padding-bottom:70px;
+  }
+  h1,h2,h3,.display{
+    font-family:'IM Fell English SC', serif;
+    font-weight:400;
+    letter-spacing:0.02em;
+  }
+  .mono{font-family:'JetBrains Mono', monospace;}
+
+  /* header */
+  header{
+    padding:28px 20px 18px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(0,0,0,0.15), transparent);
+  }
+  header h1{
+    font-size:2.1rem;
+    color:var(--copper-bright);
+    margin:0 0 4px;
+    text-shadow:0 2px 8px rgba(0,0,0,0.5);
+  }
+  header .sub{
+    color:var(--parchment-dim);
+    font-size:0.85rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:18px 16px 24px;
+  }
+
+  .panel{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px;
+    margin-bottom:16px;
+    box-shadow:0 4px 18px var(--shadow);
+  }
+  .panel h2{
+    font-size:1.35rem;
+    color:var(--copper-bright);
+    margin:0 0 12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .panel h2 .count-badge{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;
+    background:var(--bg-panel-raised);
+    color:var(--parchment-dim);
+    padding:2px 8px;
+    border-radius:20px;
+    letter-spacing:0.05em;
+  }
+  .hint{
+    color:var(--parchment-dim);
+    font-size:0.82rem;
+    line-height:1.5;
+    margin:0 0 14px;
+  }
+
+  /* nav */
+  nav.tabs{
+    position:fixed;
+    bottom:0; left:0; right:0;
+    display:flex;
+    background:#12190f;
+    border-top:1px solid var(--line);
+    z-index:50;
+  }
+  nav.tabs button{
+    flex:1;
+    background:none;
+    border:none;
+    color:var(--parchment-dim);
+    font-family:'Lora',serif;
+    font-size:0.7rem;
+    letter-spacing:0.03em;
+    padding:10px 2px 8px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    transition:color 0.2s;
+  }
+  nav.tabs button .icon{font-size:1.15rem;}
+  nav.tabs button.active{color:var(--copper-bright);}
+  nav.tabs button.active .icon{filter:drop-shadow(0 0 6px rgba(193,122,58,0.6));}
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* herb grid */
+  .herb-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(150px,1fr));
+    gap:10px;
+  }
+  .herb-card{
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px 12px;
+  }
+  .herb-card .name{
+    font-size:0.92rem;
+    color:var(--parchment);
+    margin-bottom:2px;
+  }
+  .herb-card .element{
+    font-size:0.68rem;
+    color:var(--herb-green);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    margin-bottom:8px;
+  }
+  .stepper{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
+  }
+  .stepper button{
+    width:30px;height:30px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:#1a251c;
+    color:var(--copper-bright);
+    font-size:1rem;
+    cursor:pointer;
+    line-height:1;
+  }
+  .stepper button:active{background:var(--copper);color:#12190f;}
+  .stepper .val{
+    font-family:'JetBrains Mono',monospace;
+    font-size:1rem;
+    min-width:26px;
+    text-align:center;
+  }
+
+  /* recipe cards */
+  .recipe-card{
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px;
+    margin-bottom:10px;
+    position:relative;
+  }
+  .recipe-card.locked{opacity:0.45;}
+  .recipe-card .top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:8px;
+    margin-bottom:4px;
+  }
+  .recipe-card .rname{font-size:1.05rem;color:var(--parchment);}
+  .recipe-card .rtier{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;
+    color:var(--copper);
+    letter-spacing:0.05em;
+  }
+  .recipe-card .effect{
+    font-size:0.85rem;
+    color:var(--herb-green);
+    margin-bottom:8px;
+  }
+  .recipe-card .ingredients{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:10px;
+  }
+  .chip{
+    font-size:0.72rem;
+    padding:3px 9px;
+    border-radius:20px;
+    background:#1a251c;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+  }
+  .chip.ok{color:var(--herb-green);border-color:var(--herb-green);}
+  .chip.missing{color:var(--health);border-color:var(--health);}
+  .recipe-card .meta-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:0.75rem;
+    color:var(--parchment-dim);
+  }
+  .brew-btn{
+    background:linear-gradient(180deg, var(--copper-bright), var(--copper));
+    border:none;
+    color:#1a1206;
+    font-family:'Lora',serif;
+    font-weight:600;
+    font-size:0.85rem;
+    padding:8px 16px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .brew-btn:disabled{
+    background:#3a3a2e;
+    color:#6b6b5c;
+    cursor:not-allowed;
+  }
+  .lock-note{
+    font-size:0.7rem;
+    color:var(--copper);
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  /* cauldron / active brew */
+  .cauldron-card{
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px;
+    margin-bottom:12px;
+  }
+  .cauldron-card .rname{font-size:1.1rem;color:var(--copper-bright);margin-bottom:10px;}
+  .liquid-bar{
+    height:14px;
+    border-radius:20px;
+    background:#12190f;
+    border:1px solid var(--line);
+    overflow:hidden;
+    margin-bottom:8px;
+    position:relative;
+  }
+  .liquid-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--herb-green), var(--copper-bright));
+    transition:width 1s linear;
+  }
+  .time-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.78rem;
+    color:var(--parchment-dim);
+    font-family:'JetBrains Mono',monospace;
+  }
+  .empty-state{
+    text-align:center;
+    color:var(--parchment-dim);
+    font-size:0.85rem;
+    padding:24px 10px;
+    line-height:1.6;
+  }
+
+  /* potion inventory */
+  .potion-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 14px;
+    margin-bottom:8px;
+  }
+  .potion-item .info .n{font-size:0.95rem;color:var(--parchment);}
+  .potion-item .info .e{font-size:0.78rem;color:var(--herb-green);}
+  .use-btn{
+    background:none;
+    border:1px solid var(--copper);
+    color:var(--copper-bright);
+    padding:6px 12px;
+    border-radius:6px;
+    font-family:'Lora',serif;
+    font-size:0.78rem;
+    cursor:pointer;
+  }
+
+  /* mastery */
+  .mastery-track{
+    display:flex;
+    gap:4px;
+    margin-bottom:10px;
+  }
+  .mastery-track .seg{
+    flex:1;
+    height:8px;
+    border-radius:4px;
+    background:#12190f;
+    border:1px solid var(--line);
+  }
+  .mastery-track .seg.filled{background:linear-gradient(90deg,var(--herb-green),var(--copper-bright));border-color:var(--copper-bright);}
+  .mastery-stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:14px;
+  }
+  .stat-box{
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px 12px;
+  }
+  .stat-box .label{font-size:0.68rem;color:var(--parchment-dim);text-transform:uppercase;letter-spacing:0.05em;}
+  .stat-box .value{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--copper-bright);}
+
+  /* character form */
+  .field-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .field label{font-size:0.72rem;color:var(--parchment-dim);}
+  .field input{
+    background:#12190f;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:8px 10px;
+    color:var(--parchment);
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.9rem;
+  }
+  .field input:focus{outline:1px solid var(--copper-bright);}
+  .save-btn{
+    width:100%;
+    background:var(--bg-panel-raised);
+    border:1px solid var(--copper);
+    color:var(--copper-bright);
+    padding:10px;
+    border-radius:7px;
+    font-family:'Lora',serif;
+    cursor:pointer;
+    margin-top:4px;
+  }
+  .toast{
+    position:fixed;
+    top:16px; left:50%;
+    transform:translateX(-50%);
+    background:var(--copper-bright);
+    color:#1a1206;
+    padding:9px 18px;
+    border-radius:20px;
+    font-size:0.85rem;
+    font-weight:600;
+    z-index:100;
+    box-shadow:0 6px 20px rgba(0,0,0,0.5);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s, transform 0.25s;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(6px);}
+
+  @media (prefers-reduced-motion: reduce){
+    .liquid-fill{transition:none;}
+    .toast{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🜃 Kesselbuch</h1>
+  <div class="sub">Alchemie-Werkstatt</div>
+</header>
+
+<main>
+
+  <!-- KRÄUTER -->
+  <div class="view" id="view-herbs">
+    <div class="panel">
+      <h2>Kräuterbestand <span class="count-badge" id="herb-total">0 Kräuter</span></h2>
+      <p class="hint">Trag ein, was du gerade besitzt. Das Finden der Kräuter passiert in der echten Welt — hier zählst du nur, was du dabei hast.</p>
+      <div class="herb-grid" id="herb-grid"></div>
+    </div>
+  </div>
+
+  <!-- BRAUEN -->
+  <div class="view" id="view-brew">
+    <div class="panel" id="active-panel">
+      <h2>Am Köcheln</h2>
+      <div id="active-list"></div>
+    </div>
+    <div class="panel">
+      <h2>Rezepte</h2>
+      <p class="hint">Freigeschaltet durch Mastery-Stufe. Ein Sud verbraucht die Kräuter sofort bei Braustart.</p>
+      <div id="recipe-list"></div>
+    </div>
+  </div>
+
+  <!-- LAGER -->
+  <div class="view" id="view-storage">
+    <div class="panel">
+      <h2>Tank-Lager <span class="count-badge" id="potion-total">0 fertig</span></h2>
+      <p class="hint">Fertige Tränke warten hier auf ihre Verwendung im Spiel.</p>
+      <div id="potion-list"></div>
+    </div>
+  </div>
+
+  <!-- MASTERY -->
+  <div class="view" id="view-mastery">
+    <div class="panel">
+      <h2>Braumeisterschaft</h2>
+      <div class="mastery-track" id="mastery-track"></div>
+      <p class="hint" id="mastery-progress-text" style="margin-bottom:0;"></p>
+      <div class="mastery-stats">
+        <div class="stat-box"><div class="label">Stufe</div><div class="value" id="ms-level">1 / 10</div></div>
+        <div class="stat-box"><div class="label">Sude gesamt</div><div class="value" id="ms-brews">0</div></div>
+        <div class="stat-box"><div class="label">Braudauer-Bonus</div><div class="value" id="ms-speed">−0%</div></div>
+        <div class="stat-box"><div class="label">Gleichzeitige Sude</div><div class="value" id="ms-slots">1</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARAKTER -->
+  <div class="view" id="view-char">
+    <div class="panel">
+      <h2>Charakter-Meta</h2>
+      <p class="hint">Diese Werte kopierst du aus deinem RPG-System. Sie werden nur genutzt, um Effekte wie Prozent-vom-Level anzuzeigen.</p>
+      <div class="field-row">
+        <div class="field"><label>Level</label><input type="number" id="char-level" min="0" placeholder="z.B. 12"></div>
+        <div class="field"><label>EXP aktuell</label><input type="number" id="char-exp" min="0" placeholder="z.B. 4200"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Leben (max)</label><input type="number" id="char-life" min="0" placeholder="z.B. 850"></div>
+        <div class="field"><label>Mana (max)</label><input type="number" id="char-mana" min="0" placeholder="z.B. 400"></div>
+      </div>
+      <button class="save-btn" id="char-save">Werte speichern</button>
+    </div>
+  </div>
+
+</main>
+
+<nav class="tabs">
+  <button data-view="view-herbs" class="active"><span class="icon">🌿</span>Kräuter</button>
+  <button data-view="view-brew"><span class="icon">🧪</span>Brauen</button>
+  <button data-view="view-storage"><span class="icon">🏺</span>Lager</button>
+  <button data-view="view-mastery"><span class="icon">📜</span>Mastery</button>
+  <button data-view="view-char"><span class="icon">🧙</span>Charakter</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ DATA ============ */
+const HERBS = [
+  {id:'silberkraut', name:'Silberkraut', element:'Neutral · Heilung'},
+  {id:'goldwurz', name:'Goldwurz', element:'Neutral · Mana'},
+  {id:'wasserlilie', name:'Wasserlilie', element:'Wasser'},
+  {id:'feuerbluete', name:'Feuerblüte', element:'Feuer'},
+  {id:'eiskristallmoos', name:'Eiskristallmoos', element:'Eis'},
+  {id:'donnerfarn', name:'Donnerfarn', element:'Donner'},
+  {id:'lichtblume', name:'Lichtblume', element:'Licht'},
+  {id:'schattenpilz', name:'Schattenpilz', element:'Schatten'},
+  {id:'windgras', name:'Windgras', element:'Wind'},
+  {id:'erdwurzel', name:'Erdwurzel', element:'Erde'},
+];
+
+const MASTERY_THRESHOLDS = [0,5,12,20,30,42,56,72,90,110]; // cumulative brews needed to REACH level i+1
+
+const RECIPES = [
+  {id:'kleiner_heiltrank', name:'Kleiner Heiltrank', tier:1, category:'Heilung',
+   effect:'Heilt 5% des maximalen Lebens', ingredients:{silberkraut:2}, minutes:20, mastery:1},
+  {id:'heiltrank', name:'Heiltrank', tier:2, category:'Heilung',
+   effect:'Heilt 10% des maximalen Lebens', ingredients:{silberkraut:2, wasserlilie:1}, minutes:30, mastery:1},
+  {id:'manatrank', name:'Manatrank', tier:3, category:'Mana',
+   effect:'Mana regeneriert 25% schneller — 10 Minuten', ingredients:{goldwurz:2, donnerfarn:1}, minutes:35, mastery:2},
+  {id:'grosser_heiltrank', name:'Großer Heiltrank', tier:4, category:'Heilung',
+   effect:'Heilt 20% des maximalen Lebens', ingredients:{silberkraut:3, wasserlilie:2}, minutes:45, mastery:3},
+  {id:'ausdauertrank', name:'Ausdauertrank', tier:5, category:'Ausdauer',
+   effect:'Ausdauerkosten −20% — 15 Minuten', ingredients:{windgras:2, erdwurzel:1}, minutes:50, mastery:3},
+  {id:'kraft_elixier', name:'Kraft-Elixier', tier:6, category:'Permanent',
+   effect:'Permanent +1 Stärke', ingredients:{erdwurzel:3, feuerbluete:2, goldwurz:1}, minutes:90, mastery:5},
+  {id:'manaquelle', name:'Manaquelle', tier:7, category:'Mana',
+   effect:'Mana regeneriert 50% schneller — 15 Minuten', ingredients:{goldwurz:3, donnerfarn:2, lichtblume:1}, minutes:75, mastery:5},
+  {id:'weisheitselixier', name:'Weisheitselixier', tier:8, category:'EXP',
+   effect:'Gewährt 5% deines aktuellen Levels als EXP', ingredients:{lichtblume:4, silberkraut:3, eiskristallmoos:2}, minutes:120, mastery:7},
+  {id:'unerschoepflichkeit', name:'Unerschöpflichkeit', tier:9, category:'Mana',
+   effect:'Kein Mana-Verbrauch — 5 Minuten', ingredients:{goldwurz:4, donnerfarn:3, lichtblume:2, schattenpilz:1}, minutes:150, mastery:8},
+  {id:'grosses_weisheitselixier', name:'Großes Weisheitselixier', tier:10, category:'EXP',
+   effect:'Gewährt 10% deines aktuellen Levels als EXP', ingredients:{lichtblume:5, eiskristallmoos:4, goldwurz:3, schattenpilz:2}, minutes:240, mastery:10},
+];
+
+/* ============ STORAGE ============ */
+const STORE_KEY = 'kesselbuch_v1';
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){ console.error('Ladefehler', e); }
+  const herbInv = {};
+  HERBS.forEach(h => herbInv[h.id] = 0);
+  return {
+    herbs: herbInv,
+    activeBrews: [],
+    potions: [],
+    totalBrews: 0,
+    character: {level:'', exp:'', life:'', mana:''}
+  };
+}
+function saveState(){
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+}
+
+let state = loadState();
+HERBS.forEach(h => { if(!(h.id in state.herbs)) state.herbs[h.id] = 0; });
+
+/* ============ MASTERY HELPERS ============ */
+function getMasteryLevel(totalBrews){
+  let level = 1;
+  for(let i=0;i<MASTERY_THRESHOLDS.length;i++){
+    if(totalBrews >= MASTERY_THRESHOLDS[i]) level = i+1;
+  }
+  return level;
+}
+function getBrewsForNextLevel(totalBrews){
+  const level = getMasteryLevel(totalBrews);
+  if(level >= 10) return null;
+  return MASTERY_THRESHOLDS[level]; // threshold to reach level+1
+}
+function getSpeedBonus(level){ return (level-1)*2; } // % reduction
+function getSlots(level){
+  if(level >= 9) return 3;
+  if(level >= 5) return 2;
+  return 1;
+}
+
+/* ============ BREW RESOLUTION (works even after app was closed) ============ */
+function resolveFinishedBrews(){
+  const now = Date.now();
+  const stillActive = [];
+  let finishedAny = false;
+  state.activeBrews.forEach(b => {
+    if(b.endTime <= now){
+      const recipe = RECIPES.find(r => r.id === b.recipeId);
+      state.potions.push({
+        uid: 'p_' + now + '_' + Math.random().toString(36).slice(2,7),
+        recipeId: b.recipeId,
+        finishedAt: b.endTime
+      });
+      state.totalBrews += 1;
+      finishedAny = true;
+    } else {
+      stillActive.push(b);
+    }
+  });
+  state.activeBrews = stillActive;
+  if(finishedAny) saveState();
+  return finishedAny;
+}
+
+/* ============ RENDER: HERBS ============ */
+function renderHerbs(){
+  const grid = document.getElementById('herb-grid');
+  grid.innerHTML = '';
+  let total = 0;
+  HERBS.forEach(h => {
+    total += state.herbs[h.id];
+    const card = document.createElement('div');
+    card.className = 'herb-card';
+    card.innerHTML = `
+      <div class="name">${h.name}</div>
+      <div class="element">${h.element}</div>
+      <div class="stepper">
+        <button data-herb="${h.id}" data-delta="-1">−</button>
+        <span class="val">${state.herbs[h.id]}</span>
+        <button data-herb="${h.id}" data-delta="1">+</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+  document.getElementById('herb-total').textContent = total + ' Kräuter';
+  grid.querySelectorAll('button[data-herb]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.herb;
+      const delta = parseInt(btn.dataset.delta,10);
+      state.herbs[id] = Math.max(0, state.herbs[id] + delta);
+      saveState();
+      renderHerbs();
+      renderBrewView();
+    });
+  });
+}
+
+/* ============ RENDER: BREW VIEW ============ */
+function formatDuration(ms){
+  if(ms < 0) ms = 0;
+  const totalSec = Math.floor(ms/1000);
+  const h = Math.floor(totalSec/3600);
+  const m = Math.floor((totalSec%3600)/60);
+  const s = totalSec%60;
+  if(h > 0) return `${h}h ${m}m ${s}s`;
+  if(m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
+function renderActiveBrews(){
+  const list = document.getElementById('active-list');
+  if(state.activeBrews.length === 0){
+    list.innerHTML = '<div class="empty-state">Kein Sud köchelt gerade. Wähl unten ein Rezept.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  const now = Date.now();
+  state.activeBrews.forEach(b => {
+    const recipe = RECIPES.find(r => r.id === b.recipeId);
+    const total = b.endTime - b.startTime;
+    const elapsed = Math.min(total, now - b.startTime);
+    const pct = total > 0 ? Math.min(100, (elapsed/total)*100) : 100;
+    const remaining = b.endTime - now;
+    const card = document.createElement('div');
+    card.className = 'cauldron-card';
+    card.innerHTML = `
+      <div class="rname">${recipe.name}</div>
+      <div class="liquid-bar"><div class="liquid-fill" style="width:${pct}%"></div></div>
+      <div class="time-row">
+        <span>${pct.toFixed(0)}%</span>
+        <span>${remaining > 0 ? 'noch ' + formatDuration(remaining) : 'fertig'}</span>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function renderRecipes(){
+  const level = getMasteryLevel(state.totalBrews);
+  const slots = getSlots(level);
+  const speedBonus = getSpeedBonus(level);
+  const list = document.getElementById('recipe-list');
+  list.innerHTML = '';
+  RECIPES.forEach(r => {
+    const locked = r.mastery > level;
+    const card = document.createElement('div');
+    card.className = 'recipe-card' + (locked ? ' locked' : '');
+    const ingredientsHtml = Object.entries(r.ingredients).map(([hid, qty]) => {
+      const herb = HERBS.find(h => h.id === hid);
+      const have = state.herbs[hid] >= qty;
+      return `<span class="chip ${have ? 'ok' : 'missing'}">${herb.name} ×${qty}</span>`;
+    }).join('');
+    const adjustedMinutes = Math.round(r.minutes * (1 - speedBonus/100));
+    const canAfford = Object.entries(r.ingredients).every(([hid,qty]) => state.herbs[hid] >= qty);
+    const slotsFree = state.activeBrews.length < slots;
+    const canBrew = !locked && canAfford && slotsFree;
+
+    let btnLabel = 'Sud starten';
+    if(locked) btnLabel = 'Gesperrt';
+    else if(!slotsFree) btnLabel = 'Kessel voll';
+    else if(!canAfford) btnLabel = 'Zu wenig Kräuter';
+
+    card.innerHTML = `
+      <div class="top">
+        <span class="rname">${r.name}</span>
+        <span class="rtier">STUFE ${r.tier} · ${r.category}</span>
+      </div>
+      <div class="effect">${r.effect}</div>
+      <div class="ingredients">${ingredientsHtml}</div>
+      <div class="meta-row">
+        <span>${locked ? `<span class="lock-note">Mastery ${r.mastery} nötig</span>` : `⏱ ${adjustedMinutes} Min`}</span>
+        <button class="brew-btn" data-recipe="${r.id}" ${canBrew ? '' : 'disabled'}>${btnLabel}</button>
+      </div>`;
+    list.appendChild(card);
+  });
+  list.querySelectorAll('button[data-recipe]').forEach(btn => {
+    btn.addEventListener('click', () => startBrew(btn.dataset.recipe));
+  });
+}
+
+function startBrew(recipeId){
+  const level = getMasteryLevel(state.totalBrews);
+  const slots = getSlots(level);
+  if(state.activeBrews.length >= slots) return;
+  const recipe = RECIPES.find(r => r.id === recipeId);
+  if(recipe.mastery > level) return;
+  const canAfford = Object.entries(recipe.ingredients).every(([hid,qty]) => state.herbs[hid] >= qty);
+  if(!canAfford) return;
+
+  Object.entries(recipe.ingredients).forEach(([hid,qty]) => { state.herbs[hid] -= qty; });
+  const speedBonus = getSpeedBonus(level);
+  const adjustedMinutes = Math.round(recipe.minutes * (1 - speedBonus/100));
+  const start = Date.now();
+  state.activeBrews.push({
+    id: 'b_' + start + '_' + Math.random().toString(36).slice(2,7),
+    recipeId: recipe.id,
+    startTime: start,
+    endTime: start + adjustedMinutes*60*1000
+  });
+  saveState();
+  showToast(recipe.name + ' köchelt jetzt');
+  renderHerbs();
+  renderBrewView();
+}
+
+function renderBrewView(){
+  resolveFinishedBrews();
+  renderActiveBrews();
+  renderRecipes();
+  renderStorage();
+  renderMastery();
+}
+
+/* ============ RENDER: STORAGE ============ */
+function renderStorage(){
+  const list = document.getElementById('potion-list');
+  document.getElementById('potion-total').textContent = state.potions.length + ' fertig';
+  if(state.potions.length === 0){
+    list.innerHTML = '<div class="empty-state">Noch keine Tränke im Lager. Brau etwas!</div>';
+    return;
+  }
+  list.innerHTML = '';
+  [...state.potions].reverse().forEach(p => {
+    const recipe = RECIPES.find(r => r.id === p.recipeId);
+    const item = document.createElement('div');
+    item.className = 'potion-item';
+    item.innerHTML = `
+      <div class="info">
+        <div class="n">${recipe.name}</div>
+        <div class="e">${recipe.effect}</div>
+      </div>
+      <button class="use-btn" data-uid="${p.uid}">Verwenden</button>`;
+    list.appendChild(item);
+  });
+  list.querySelectorAll('button[data-uid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.potions = state.potions.filter(p => p.uid !== btn.dataset.uid);
+      saveState();
+      renderStorage();
+      showToast('Trank verwendet');
+    });
+  });
+}
+
+/* ============ RENDER: MASTERY ============ */
+function renderMastery(){
+  const level = getMasteryLevel(state.totalBrews);
+  const track = document.getElementById('mastery-track');
+  track.innerHTML = '';
+  for(let i=1;i<=10;i++){
+    const seg = document.createElement('div');
+    seg.className = 'seg' + (i <= level ? ' filled' : '');
+    track.appendChild(seg);
+  }
+  const nextThreshold = getBrewsForNextLevel(state.totalBrews);
+  const progressText = document.getElementById('mastery-progress-text');
+  if(nextThreshold === null){
+    progressText.textContent = 'Höchste Braumeisterschaft erreicht — alle Rezepte freigeschaltet.';
+  } else {
+    progressText.textContent = `${state.totalBrews} von ${nextThreshold} Suden für Stufe ${level+1}.`;
+  }
+  document.getElementById('ms-level').textContent = level + ' / 10';
+  document.getElementById('ms-brews').textContent = state.totalBrews;
+  document.getElementById('ms-speed').textContent = '−' + getSpeedBonus(level) + '%';
+  document.getElementById('ms-slots').textContent = getSlots(level);
+}
+
+/* ============ CHARACTER ============ */
+function loadCharacterForm(){
+  const c = state.character || {};
+  document.getElementById('char-level').value = c.level || '';
+  document.getElementById('char-exp').value = c.exp || '';
+  document.getElementById('char-life').value = c.life || '';
+  document.getElementById('char-mana').value = c.mana || '';
+}
+document.getElementById('char-save').addEventListener('click', () => {
+  state.character = {
+    level: document.getElementById('char-level').value,
+    exp: document.getElementById('char-exp').value,
+    life: document.getElementById('char-life').value,
+    mana: document.getElementById('char-mana').value,
+  };
+  saveState();
+  showToast('Charakterwerte gespeichert');
+});
+
+/* ============ TOAST ============ */
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ============ TABS ============ */
+document.querySelectorAll('nav.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.view).classList.add('active');
+  });
+});
+
+/* ============ INIT & TICK ============ */
+function fullRender(){
+  renderHerbs();
+  renderBrewView();
+  loadCharacterForm();
+}
+fullRender();
+
+// re-check every second so progress bars move and finished brews land in storage
+// even if the tab was closed and reopened later (resolved via timestamps, not this interval)
+setInterval(() => {
+  const finished = resolveFinishedBrews();
+  renderActiveBrews();
+  if(finished){
+    renderRecipes();
+    renderStorage();
+    renderMastery();
+    showToast('Ein Sud ist fertig!');
+  }
+}, 1000);
+
+// also resolve immediately when the tab regains focus (covers long absences)
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible'){
+    fullRender();
+  }
+});
+</script>
+</body>
+</html>
