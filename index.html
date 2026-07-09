@@ -537,7 +537,7 @@
     </div>
     <div class="panel">
       <h2>Rezepte</h2>
-      <p class="hint">Freigeschaltet durch Mastery-Stufe. Ein Sud verbraucht die Kräuter sofort bei Braustart.</p>
+      <p class="hint">Freigeschaltet durch Mastery-Stufe. Ein Sud verbraucht die Kräuter sofort bei Braustart. Bei Elixier- und Booster-Ketten (I/II/III) ersetzt die höhere Stufe die vorherige — sie stapeln sich nicht.</p>
       <div id="recipe-list"></div>
     </div>
   </div>
@@ -639,15 +639,25 @@ const RECIPES = [
    effect:'Heilt 20% des maximalen Lebens', ingredients:{silberkraut:3, wasserlilie:2}, minutes:45, mastery:3},
   {id:'ausdauertrank', name:'Ausdauertrank', tier:5, category:'Ausdauer',
    effect:'Ausdauerkosten −20% — 15 Minuten', ingredients:{windgras:2, erdwurzel:1}, minutes:50, mastery:3},
-  {id:'kraft_elixier', name:'Kraft-Elixier', tier:6, category:'Permanent',
-   effect:'Permanent +1 Stärke', ingredients:{erdwurzel:3, feuerbluete:2, goldwurz:1}, minutes:90, mastery:5},
-  {id:'manaquelle', name:'Manaquelle', tier:7, category:'Mana',
+  {id:'allrounder_1', name:'Allrounder-Elixier I', tier:6, category:'Permanent',
+   effect:'Permanent: bei jeder abgeschlossenen Aktivität +1 zusätzlich auf jeden Stat', ingredients:{erdwurzel:2, feuerbluete:2, goldwurz:1, silberkraut:1}, minutes:80, mastery:4},
+  {id:'tagesansporn_1', name:'Tagesansporn-Trank I', tier:7, category:'Booster',
+   effect:'+10% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:2, donnerfarn:1, goldwurz:1}, minutes:70, mastery:4},
+  {id:'manaquelle', name:'Manaquelle', tier:8, category:'Mana',
    effect:'Mana regeneriert 50% schneller — 15 Minuten', ingredients:{goldwurz:3, donnerfarn:2, lichtblume:1}, minutes:75, mastery:5},
-  {id:'weisheitselixier', name:'Weisheitselixier', tier:8, category:'EXP',
+  {id:'allrounder_2', name:'Allrounder-Elixier II', tier:9, category:'Permanent',
+   effect:'Permanent: +3 zusätzlich auf jeden Stat pro Aktivität (ersetzt Stufe I)', ingredients:{erdwurzel:3, feuerbluete:3, goldwurz:2, eiskristallmoos:1}, minutes:130, mastery:6},
+  {id:'tagesansporn_2', name:'Tagesansporn-Trank II', tier:10, category:'Booster',
+   effect:'+20% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:3, donnerfarn:2, goldwurz:2, windgras:1}, minutes:110, mastery:6},
+  {id:'weisheitselixier', name:'Weisheitselixier', tier:11, category:'EXP',
    effect:'Gewährt 5% deines aktuellen Levels als EXP', ingredients:{lichtblume:4, silberkraut:3, eiskristallmoos:2}, minutes:120, mastery:7},
-  {id:'unerschoepflichkeit', name:'Unerschöpflichkeit', tier:9, category:'Mana',
+  {id:'unerschoepflichkeit', name:'Unerschöpflichkeit', tier:12, category:'Mana',
    effect:'Kein Mana-Verbrauch — 5 Minuten', ingredients:{goldwurz:4, donnerfarn:3, lichtblume:2, schattenpilz:1}, minutes:150, mastery:8},
-  {id:'grosses_weisheitselixier', name:'Großes Weisheitselixier', tier:10, category:'EXP',
+  {id:'allrounder_3', name:'Allrounder-Elixier III', tier:13, category:'Permanent',
+   effect:'Permanent: +5 zusätzlich auf jeden Stat pro Aktivität (ersetzt Stufe II)', ingredients:{erdwurzel:4, feuerbluete:4, goldwurz:3, eiskristallmoos:2, schattenpilz:1}, minutes:200, mastery:9},
+  {id:'tagesansporn_3', name:'Tagesansporn-Trank III', tier:14, category:'Booster',
+   effect:'+30% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:5, donnerfarn:3, goldwurz:3, windgras:2}, minutes:170, mastery:9},
+  {id:'grosses_weisheitselixier', name:'Großes Weisheitselixier', tier:15, category:'EXP',
    effect:'Gewährt 10% deines aktuellen Levels als EXP', ingredients:{lichtblume:5, eiskristallmoos:4, goldwurz:3, schattenpilz:2}, minutes:240, mastery:10},
 ];
 
