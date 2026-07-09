@@ -1174,7 +1174,9 @@ setInterval(() => {
     renderMastery();
     showToast('Ein Sud ist fertig!');
   }
-  renderPlots(); // updates growth bars / countdowns, ready-state doesn't need a toast since harvest is manual
+  if(openSeedPickerIndex === null){
+    renderPlots(); // updates growth bars / countdowns, ready-state doesn't need a toast since harvest is manual
+  }
 }, 1000);
 
 // also resolve immediately when the tab regains focus (covers long absences)
