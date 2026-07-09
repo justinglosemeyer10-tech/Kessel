@@ -910,25 +910,40 @@ function renderStorage(){
     list.innerHTML = '<div class="empty-state">Noch keine Tränke im Lager. Brau etwas!</div>';
     return;
   }
+  // gleiche Tränke stapeln statt einzeln aufzulisten
+  const groups = {};
+  state.potions.forEach(p => {
+    if(!groups[p.recipeId]) groups[p.recipeId] = [];
+    groups[p.recipeId].push(p);
+  });
+  const groupEntries = Object.entries(groups).sort((a,b) => {
+    const latestA = Math.max(...a[1].map(p => p.finishedAt));
+    const latestB = Math.max(...b[1].map(p => p.finishedAt));
+    return latestB - latestA; // zuletzt fertiggestellter Stapel zuerst
+  });
   list.innerHTML = '';
-  [...state.potions].reverse().forEach(p => {
-    const recipe = RECIPES.find(r => r.id === p.recipeId);
+  groupEntries.forEach(([recipeId, items]) => {
+    const recipe = RECIPES.find(r => r.id === recipeId);
     const item = document.createElement('div');
     item.className = 'potion-item';
     item.innerHTML = `
       <div class="info">
-        <div class="n">${recipe.name}</div>
+        <div class="n">${items.length}× ${recipe.name}</div>
         <div class="e">${recipe.effect}</div>
       </div>
-      <button class="use-btn" data-uid="${p.uid}">Verwenden</button>`;
+      <button class="use-btn" data-recipe="${recipeId}">Verwenden</button>`;
     list.appendChild(item);
   });
-  list.querySelectorAll('button[data-uid]').forEach(btn => {
+  list.querySelectorAll('button[data-recipe]').forEach(btn => {
     btn.addEventListener('click', () => {
-      state.potions = state.potions.filter(p => p.uid !== btn.dataset.uid);
-      saveState();
-      renderStorage();
-      showToast('Trank verwendet');
+      const recipeId = btn.dataset.recipe;
+      const idx = state.potions.findIndex(p => p.recipeId === recipeId);
+      if(idx >= 0){
+        state.potions.splice(idx, 1);
+        saveState();
+        renderStorage();
+        showToast('Trank verwendet');
+      }
     });
   });
 }
