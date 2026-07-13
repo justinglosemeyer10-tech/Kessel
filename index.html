@@ -631,38 +631,39 @@ const SEEDS = {
 };
 const MAX_PLOTS = 13;
 const GARDEN_THRESHOLDS = [0,4,10,18,28,40,54,70,88,108]; // cumulative harvests needed to REACH level i+1
+const MAX_POTION_STACK = 5; // Lagerobergrenze pro Tranktyp
 
 const RECIPES = [
   {id:'kleiner_heiltrank', name:'Kleiner Heiltrank', tier:1, category:'Heilung',
-   effect:'Heilt 5% des maximalen Lebens', ingredients:{silberkraut:2}, minutes:20, mastery:1},
+   effect:'Heilt 5% des maximalen Lebens', ingredients:{silberkraut:2}, minutes:25, mastery:1},
   {id:'heiltrank', name:'Heiltrank', tier:2, category:'Heilung',
-   effect:'Heilt 10% des maximalen Lebens', ingredients:{silberkraut:2, wasserlilie:1}, minutes:30, mastery:1},
+   effect:'Heilt 10% des maximalen Lebens', ingredients:{silberkraut:2, wasserlilie:1}, minutes:40, mastery:1},
   {id:'manatrank', name:'Manatrank', tier:3, category:'Mana',
-   effect:'Mana regeneriert 25% schneller — 10 Minuten', ingredients:{goldwurz:2, donnerfarn:1}, minutes:35, mastery:2},
+   effect:'Mana regeneriert 25% schneller — 10 Minuten', ingredients:{goldwurz:2, donnerfarn:1}, minutes:50, mastery:2},
   {id:'grosser_heiltrank', name:'Großer Heiltrank', tier:4, category:'Heilung',
-   effect:'Heilt 20% des maximalen Lebens', ingredients:{silberkraut:3, wasserlilie:2}, minutes:45, mastery:3},
+   effect:'Heilt 20% des maximalen Lebens', ingredients:{silberkraut:3, wasserlilie:2}, minutes:65, mastery:3},
   {id:'ausdauertrank', name:'Ausdauertrank', tier:5, category:'Ausdauer',
-   effect:'Ausdauerkosten −20% — 15 Minuten', ingredients:{windgras:2, erdwurzel:1}, minutes:50, mastery:3},
+   effect:'Ausdauerkosten −20% — 15 Minuten', ingredients:{windgras:2, erdwurzel:1}, minutes:70, mastery:3},
   {id:'allrounder_1', name:'Allrounder-Elixier I', tier:6, category:'Permanent',
-   effect:'Permanent: bei jeder abgeschlossenen Aktivität +1 zusätzlich auf jeden Stat', ingredients:{erdwurzel:2, feuerbluete:2, goldwurz:1, silberkraut:1}, minutes:80, mastery:4},
+   effect:'Permanent: bei jeder abgeschlossenen Aktivität +1 zusätzlich auf jeden Stat', ingredients:{erdwurzel:2, feuerbluete:2, goldwurz:1, silberkraut:1}, minutes:150, mastery:4},
   {id:'tagesansporn_1', name:'Tagesansporn-Trank I', tier:7, category:'Booster',
-   effect:'+10% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:2, donnerfarn:1, goldwurz:1}, minutes:70, mastery:4},
+   effect:'+10% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:2, donnerfarn:1, goldwurz:1}, minutes:110, mastery:4},
   {id:'manaquelle', name:'Manaquelle', tier:8, category:'Mana',
-   effect:'Mana regeneriert 50% schneller — 15 Minuten', ingredients:{goldwurz:3, donnerfarn:2, lichtblume:1}, minutes:75, mastery:5},
+   effect:'Mana regeneriert 50% schneller — 15 Minuten', ingredients:{goldwurz:3, donnerfarn:2, lichtblume:1}, minutes:105, mastery:5},
   {id:'allrounder_2', name:'Allrounder-Elixier II', tier:9, category:'Permanent',
-   effect:'Permanent: +3 zusätzlich auf jeden Stat pro Aktivität (ersetzt Stufe I)', ingredients:{erdwurzel:3, feuerbluete:3, goldwurz:2, eiskristallmoos:1}, minutes:130, mastery:6},
+   effect:'Permanent: +3 zusätzlich auf jeden Stat pro Aktivität (ersetzt Stufe I)', ingredients:{erdwurzel:3, feuerbluete:3, goldwurz:2, eiskristallmoos:1}, minutes:260, mastery:6},
   {id:'tagesansporn_2', name:'Tagesansporn-Trank II', tier:10, category:'Booster',
-   effect:'+20% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:3, donnerfarn:2, goldwurz:2, windgras:1}, minutes:110, mastery:6},
+   effect:'+20% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:3, donnerfarn:2, goldwurz:2, windgras:1}, minutes:170, mastery:6},
   {id:'weisheitselixier', name:'Weisheitselixier', tier:11, category:'EXP',
-   effect:'Gewährt 5% deines aktuellen Levels als EXP', ingredients:{lichtblume:4, silberkraut:3, eiskristallmoos:2}, minutes:120, mastery:7},
+   effect:'Gewährt 5% deines aktuellen Levels als EXP', ingredients:{lichtblume:4, silberkraut:3, eiskristallmoos:2}, minutes:210, mastery:7},
   {id:'unerschoepflichkeit', name:'Unerschöpflichkeit', tier:12, category:'Mana',
-   effect:'Kein Mana-Verbrauch — 5 Minuten', ingredients:{goldwurz:4, donnerfarn:3, lichtblume:2, schattenpilz:1}, minutes:150, mastery:8},
+   effect:'Kein Mana-Verbrauch — 5 Minuten', ingredients:{goldwurz:4, donnerfarn:3, lichtblume:2, schattenpilz:1}, minutes:240, mastery:8},
   {id:'allrounder_3', name:'Allrounder-Elixier III', tier:13, category:'Permanent',
-   effect:'Permanent: +5 zusätzlich auf jeden Stat pro Aktivität (ersetzt Stufe II)', ingredients:{erdwurzel:4, feuerbluete:4, goldwurz:3, eiskristallmoos:2, schattenpilz:1}, minutes:200, mastery:9},
+   effect:'Permanent: +5 zusätzlich auf jeden Stat pro Aktivität (ersetzt Stufe II)', ingredients:{erdwurzel:4, feuerbluete:4, goldwurz:3, eiskristallmoos:2, schattenpilz:1}, minutes:420, mastery:9},
   {id:'tagesansporn_3', name:'Tagesansporn-Trank III', tier:14, category:'Booster',
-   effect:'+30% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:5, donnerfarn:3, goldwurz:3, windgras:2}, minutes:170, mastery:9},
+   effect:'+30% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:5, donnerfarn:3, goldwurz:3, windgras:2}, minutes:280, mastery:9},
   {id:'grosses_weisheitselixier', name:'Großes Weisheitselixier', tier:15, category:'EXP',
-   effect:'Gewährt 10% deines aktuellen Levels als EXP', ingredients:{lichtblume:5, eiskristallmoos:4, goldwurz:3, schattenpilz:2}, minutes:240, mastery:10},
+   effect:'Gewährt 10% deines aktuellen Levels als EXP', ingredients:{lichtblume:5, eiskristallmoos:4, goldwurz:3, schattenpilz:2}, minutes:400, mastery:10},
 ];
 
 /* ============ STORAGE ============ */
@@ -697,6 +698,7 @@ if(!Array.isArray(state.plots)) state.plots = new Array(MAX_PLOTS).fill(null);
 while(state.plots.length < MAX_PLOTS) state.plots.push(null);
 if(typeof state.gardenTotalHarvests !== 'number') state.gardenTotalHarvests = 0;
 let openSeedPickerIndex = null;
+if(enforcePotionCap()) saveState();
 
 /* ============ MASTERY HELPERS ============ */
 function getMasteryLevel(totalBrews){
@@ -747,6 +749,25 @@ function getGardenBonusChance(level, totalHarvests){
 }
 
 /* ============ BREW RESOLUTION (works even after app was closed) ============ */
+function enforcePotionCap(){
+  const groups = {};
+  state.potions.forEach(p => {
+    if(!groups[p.recipeId]) groups[p.recipeId] = [];
+    groups[p.recipeId].push(p);
+  });
+  let trimmed = false;
+  Object.values(groups).forEach(items => {
+    if(items.length > MAX_POTION_STACK){
+      items.sort((a,b) => a.finishedAt - b.finishedAt); // älteste zuerst
+      const overflow = items.slice(0, items.length - MAX_POTION_STACK);
+      const overflowUids = new Set(overflow.map(p => p.uid));
+      state.potions = state.potions.filter(p => !overflowUids.has(p.uid));
+      trimmed = true;
+    }
+  });
+  return trimmed;
+}
+
 function resolveFinishedBrews(){
   const now = Date.now();
   const stillActive = [];
@@ -766,7 +787,10 @@ function resolveFinishedBrews(){
     }
   });
   state.activeBrews = stillActive;
-  if(finishedAny) saveState();
+  if(finishedAny){
+    enforcePotionCap();
+    saveState();
+  }
   return finishedAny;
 }
 
@@ -859,17 +883,20 @@ function renderRecipes(){
     const adjustedMinutes = Math.round(r.minutes * (1 - speedBonus/100));
     const canAfford = Object.entries(r.ingredients).every(([hid,qty]) => state.herbs[hid] >= qty);
     const slotsFree = state.activeBrews.length < slots;
-    const canBrew = !locked && canAfford && slotsFree;
+    const stock = state.potions.filter(p => p.recipeId === r.id).length;
+    const stockFull = stock >= MAX_POTION_STACK;
+    const canBrew = !locked && canAfford && slotsFree && !stockFull;
 
     let btnLabel = 'Sud starten';
     if(locked) btnLabel = 'Gesperrt';
+    else if(stockFull) btnLabel = 'Lager voll (5/5)';
     else if(!slotsFree) btnLabel = 'Kessel voll';
     else if(!canAfford) btnLabel = 'Zu wenig Kräuter';
 
     card.innerHTML = `
       <div class="top">
         <span class="rname">${r.name}</span>
-        <span class="rtier">MASTERY ${r.mastery} · ${r.category}</span>
+        <span class="rtier">MASTERY ${r.mastery} · ${r.category} · ${stock}/${MAX_POTION_STACK} im Lager</span>
       </div>
       <div class="effect">${r.effect}</div>
       <div class="ingredients">${ingredientsHtml}</div>
@@ -892,6 +919,8 @@ function startBrew(recipeId){
   if(recipe.mastery > level) return;
   const canAfford = Object.entries(recipe.ingredients).every(([hid,qty]) => state.herbs[hid] >= qty);
   if(!canAfford) return;
+  const stock = state.potions.filter(p => p.recipeId === recipeId).length;
+  if(stock >= MAX_POTION_STACK){ showToast('Lager für diesen Trank ist voll (5/5)'); return; }
 
   Object.entries(recipe.ingredients).forEach(([hid,qty]) => { state.herbs[hid] -= qty; });
   const speedBonus = getSpeedBonus(level);
