@@ -2,1047 +2,1309 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Werkstatt</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Kesselbuch — Alchemie-Werkstatt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#14110f;
-    --panel:#1f1a16;
-    --panel-raised:#2a231d;
-    --panel-line:#3a2f26;
-    --text:#f2e8d8;
-    --muted:#a89a86;
-    --muted2:#6f6255;
-    --brass:#c9a15a;
-    --brass-dim:#8a6f3e;
-    --danger:#c85a4a;
-    --good:#7fae6a;
-
-    --fire:#e2572b;
-    --ice:#6fd3e0;
-    --water:#3f7fd1;
-    --thunder:#e8d34a;
-    --light:#f5ecc9;
-    --shadow:#8a72b8;
-    --wind:#7fc9a0;
-    --earth:#a67c4a;
+    --bg-deep:#152018;
+    --bg-panel:#1e2c22;
+    --bg-panel-raised:#26372b;
+    --parchment:#ece1c4;
+    --parchment-dim:#c9bd9e;
+    --copper:#c17a3a;
+    --copper-bright:#e0985a;
+    --health:#a8433f;
+    --mana:#7a5c9e;
+    --herb-green:#7fa06f;
+    --line:#3a4a3b;
+    --shadow:rgba(0,0,0,0.45);
   }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-    height:100%; overscroll-behavior-y:contain;}
-  body{padding-bottom:78px;}
-  h1,h2,h3{font-family:Georgia,"Iowan Old Style",serif; margin:0; letter-spacing:.03em;}
-
-  header.top{
-    position:sticky; top:0; z-index:10;
-    background:linear-gradient(180deg,#1a1512 0%, #14110f 100%);
-    border-bottom:1px solid var(--panel-line);
-    padding:16px 18px 12px;
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% 0%, #1c2b21 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 100%, #1a2a1e 0%, transparent 50%),
+      var(--bg-deep);
+    color:var(--parchment);
+    font-family:'Lora', serif;
+    min-height:100vh;
+    padding-bottom:70px;
   }
-  header.top h1{font-size:22px; color:var(--brass); display:flex; align-items:center; gap:8px;}
-  header.top .sub{font-size:12px; color:var(--muted); margin-top:2px;}
+  h1,h2,h3,.display{
+    font-family:'IM Fell English SC', serif;
+    font-weight:400;
+    letter-spacing:0.02em;
+  }
+  .mono{font-family:'JetBrains Mono', monospace;}
 
-  main{padding:14px 14px 24px; max-width:560px; margin:0 auto;}
+  /* header */
+  header{
+    padding:28px 20px 18px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(0,0,0,0.15), transparent);
+  }
+  header h1{
+    font-size:2.1rem;
+    color:var(--copper-bright);
+    margin:0 0 4px;
+    text-shadow:0 2px 8px rgba(0,0,0,0.5);
+  }
+  header .sub{
+    color:var(--parchment-dim);
+    font-size:0.85rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:18px 16px 24px;
+  }
 
   .panel{
-    background:var(--panel);
-    border:1px solid var(--panel-line);
+    background:var(--bg-panel);
+    border:1px solid var(--line);
     border-radius:10px;
-    padding:14px;
-    margin-bottom:12px;
+    padding:18px;
+    margin-bottom:16px;
+    box-shadow:0 4px 18px var(--shadow);
   }
-  .panel-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;}
-  .panel-head h2{font-size:15px; color:var(--text);}
-  .panel-head .count{font-size:11px; color:var(--muted2);}
+  .panel h2{
+    font-size:1.35rem;
+    color:var(--copper-bright);
+    margin:0 0 12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .panel h2 .count-badge{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;
+    background:var(--bg-panel-raised);
+    color:var(--parchment-dim);
+    padding:2px 8px;
+    border-radius:20px;
+    letter-spacing:0.05em;
+  }
+  .hint{
+    color:var(--parchment-dim);
+    font-size:0.82rem;
+    line-height:1.5;
+    margin:0 0 14px;
+  }
 
-  .empty{color:var(--muted2); font-size:13px; text-align:center; padding:18px 8px; border:1px dashed var(--panel-line); border-radius:8px;}
+  /* nav */
+  nav.tabs{
+    position:fixed;
+    bottom:0; left:0; right:0;
+    display:flex;
+    background:#12190f;
+    border-top:1px solid var(--line);
+    z-index:50;
+  }
+  nav.tabs button{
+    flex:1;
+    background:none;
+    border:none;
+    color:var(--parchment-dim);
+    font-family:'Lora',serif;
+    font-size:0.7rem;
+    letter-spacing:0.03em;
+    padding:10px 2px 8px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    transition:color 0.2s;
+  }
+  nav.tabs button .icon{font-size:1.15rem;}
+  nav.tabs button.active{color:var(--copper-bright);}
+  nav.tabs button.active .icon{filter:drop-shadow(0 0 6px rgba(193,122,58,0.6));}
 
-  .token{
-    display:flex; align-items:center; gap:10px;
-    background:var(--panel-raised);
-    border:1px solid var(--panel-line);
-    border-left:3px solid var(--tokencolor,var(--brass));
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* herb grid */
+  .herb-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(150px,1fr));
+    gap:10px;
+  }
+  .herb-card{
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
     border-radius:8px;
-    padding:9px 10px;
-    margin-bottom:7px;
+    padding:10px 12px;
   }
-  .token .elico{font-size:18px; width:22px; text-align:center; flex-shrink:0;}
-  .token .meta{flex:1; min-width:0;}
-  .token .meta .name{font-size:13.5px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .token .meta .tags{font-size:11px; color:var(--muted); margin-top:1px; display:flex; flex-wrap:wrap; gap:4px; align-items:center;}
-  .rarity-badge{
-    font-size:9.5px; text-transform:uppercase; letter-spacing:.06em; font-weight:700;
-    padding:2px 6px; border-radius:20px; white-space:nowrap;
-    color:#14110f;
+  .herb-card .name{
+    font-size:0.92rem;
+    color:var(--parchment);
+    margin-bottom:2px;
   }
-  .r-gewoehnlich{background:#8a8578;}
-  .r-selten{background:#6fa8d6;}
-  .r-episch{background:#b787e0;}
-  .r-legendaer{background:#e0ac4a;}
-  .r-mystisch{background:linear-gradient(90deg,#e0ac4a,#c95ae0); color:#14110f;}
-  .ability-badge{
-    font-size:9.5px; padding:2px 6px; border-radius:20px; background:#2c2116; color:var(--brass);
-    border:1px solid var(--brass-dim); white-space:nowrap;
+  .herb-card .element{
+    font-size:0.68rem;
+    color:var(--herb-green);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    margin-bottom:8px;
   }
-  .type-badge{
-    font-size:9.5px; padding:2px 6px; border-radius:20px; background:#22282a; color:var(--muted);
-    border:1px solid var(--panel-line); white-space:nowrap;
+  .stepper{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
   }
-
-  .token .action{flex-shrink:0;}
-
-  button{
-    font-family:inherit; cursor:pointer; border:none; border-radius:7px;
-    font-weight:600; letter-spacing:.02em;
+  .stepper button{
+    width:30px;height:30px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:#1a251c;
+    color:var(--copper-bright);
+    font-size:1rem;
+    cursor:pointer;
+    line-height:1;
   }
-  .btn-primary{background:var(--brass); color:#14110f; padding:9px 14px; font-size:13px;}
-  .btn-primary:disabled{background:#4a4038; color:var(--muted2); cursor:not-allowed;}
-  .btn-ghost{background:transparent; color:var(--brass); border:1px solid var(--brass-dim); padding:7px 11px; font-size:12.5px;}
-  .btn-ghost:disabled{color:var(--muted2); border-color:var(--panel-line); cursor:not-allowed;}
-  .btn-small{padding:6px 10px; font-size:11.5px;}
-  .btn-danger{background:transparent; color:var(--danger); border:1px solid #4a2c26; padding:6px 9px; font-size:11.5px;}
-  .btn-block{width:100%;}
-
-  .add-fab{
-    position:fixed; right:16px; bottom:88px; z-index:20;
-    width:52px; height:52px; border-radius:50%;
-    background:var(--brass); color:#14110f; font-size:26px;
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 4px 14px rgba(0,0,0,.5);
+  .stepper button:active{background:var(--copper);color:#12190f;}
+  .stepper .val{
+    font-family:'JetBrains Mono',monospace;
+    font-size:1rem;
+    min-width:26px;
+    text-align:center;
   }
 
-  .pour-bar{
-    height:9px; border-radius:6px; overflow:hidden;
-    background:#100d0b; border:1px solid var(--panel-line);
-    margin:8px 0 4px;
+  /* recipe cards */
+  .recipe-card{
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px;
+    margin-bottom:10px;
+    position:relative;
   }
-  .pour-fill{
-    height:100%;
-    background:linear-gradient(90deg, var(--fire), var(--thunder));
-    background-size:200% 100%;
-    animation:pour 2.4s linear infinite;
+  .recipe-card.locked{opacity:0.45;}
+  .recipe-card .top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:8px;
+    margin-bottom:4px;
   }
-  @keyframes pour{ 0%{background-position:0% 0;} 100%{background-position:200% 0;} }
-  .timer-row{display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--muted);}
-  .timer-row .clock{font-variant-numeric:tabular-nums; color:var(--brass);}
-
-  nav.bottom{
-    position:fixed; bottom:0; left:0; right:0; z-index:30;
-    background:#181310; border-top:1px solid var(--panel-line);
-    display:flex; padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+  .recipe-card .rname{font-size:1.05rem;color:var(--parchment);}
+  .recipe-card .rtier{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;
+    color:var(--copper);
+    letter-spacing:0.05em;
   }
-  nav.bottom button{
-    flex:1; background:transparent; display:flex; flex-direction:column; align-items:center; gap:2px;
-    padding:6px 2px; color:var(--muted2); font-size:10.5px;
+  .recipe-card .effect{
+    font-size:0.85rem;
+    color:var(--herb-green);
+    margin-bottom:8px;
   }
-  nav.bottom button .ic{font-size:19px;}
-  nav.bottom button.active{color:var(--brass);}
-
-  .tabpage{display:none;}
-  .tabpage.active{display:block;}
-
-  .modal-backdrop{
-    position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:50;
-    display:none; align-items:flex-end;
-  }
-  .modal-backdrop.open{display:flex;}
-  .modal{
-    background:var(--panel); border-top:1px solid var(--panel-line);
-    border-radius:16px 16px 0 0; width:100%; max-height:88vh; overflow-y:auto;
-    padding:18px 18px calc(18px + env(safe-area-inset-bottom));
-  }
-  .modal h3{font-size:17px; color:var(--brass); margin-bottom:14px;}
-  label{display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:12px 0 5px;}
-  label:first-of-type{margin-top:0;}
-  input[type=text], select{
-    width:100%; background:var(--panel-raised); border:1px solid var(--panel-line);
-    color:var(--text); border-radius:7px; padding:11px 10px; font-size:14px; font-family:inherit;
-  }
-  .radiorow{display:flex; gap:8px;}
-  .radiorow label.opt{
-    flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
-    background:var(--panel-raised); border:1px solid var(--panel-line); border-radius:7px;
-    padding:10px; font-size:13px; text-transform:none; letter-spacing:0; color:var(--muted); margin:0;
-  }
-  .radiorow input{display:none;}
-  .radiorow label.opt.checked{border-color:var(--brass); color:var(--brass); background:#2c2116;}
-  .modal-actions{display:flex; gap:10px; margin-top:18px;}
-  .modal-actions button{flex:1;}
-  .close-x{position:absolute; top:14px; right:16px; background:none; color:var(--muted); font-size:20px; padding:4px 8px;}
-
-  .hint{font-size:12px; color:var(--muted2); margin-top:6px; line-height:1.5;}
-
-  textarea{
-    width:100%; background:var(--panel-raised); border:1px solid var(--panel-line);
-    color:var(--text); border-radius:7px; padding:11px 10px; font-size:13.5px; font-family:inherit;
-    resize:vertical; line-height:1.5;
-  }
-  .paste-line{
-    display:flex; align-items:center; gap:8px; padding:7px 8px; border-radius:6px;
-    font-size:12.5px; margin-top:5px; border:1px solid var(--panel-line); background:var(--panel-raised);
-  }
-  .paste-line.ok{border-left:3px solid var(--good);}
-  .paste-line.err{border-left:3px solid var(--danger); color:var(--muted);}
-  .paste-line .ptxt{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-
-  .select-picker{display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;}
-  .pick-chip{
-    background:var(--panel-raised); border:1px solid var(--panel-line); border-radius:20px;
-    padding:6px 12px; font-size:12px; color:var(--muted);
-  }
-  .pick-chip.checked{border-color:var(--brass); color:var(--brass); background:#2c2116;}
-
-  .mastery-track{display:flex; gap:3px; margin:10px 0;}
-  .mastery-pip{flex:1; height:8px; border-radius:3px; background:#100d0b; border:1px solid var(--panel-line);}
-  .mastery-pip.filled{background:var(--brass); border-color:var(--brass);}
-
-  .stat-line{display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--panel-line);}
-  .stat-line:last-child{border-bottom:none;}
-  .stat-line .v{color:var(--brass); font-weight:600;}
-
-  .toast{
-    position:fixed; left:50%; bottom:90px; transform:translateX(-50%);
-    background:#2c2116; border:1px solid var(--brass-dim); color:var(--brass);
-    padding:10px 16px; border-radius:20px; font-size:13px; z-index:60;
-    opacity:0; pointer-events:none; transition:opacity .25s; max-width:88vw; text-align:center;
-  }
-  .toast.show{opacity:1;}
-
-  .item-card{
-    background:var(--panel-raised);
-    border:1px solid var(--panel-line);
-    border-left:3px solid var(--tokencolor,var(--brass));
-    border-radius:10px;
-    padding:11px 12px;
+  .recipe-card .ingredients{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
     margin-bottom:10px;
   }
-  .item-card-top{display:flex; align-items:flex-start; gap:10px;}
-  .item-card-top .elico{font-size:18px; flex-shrink:0; padding-top:2px;}
-  .item-card-top .meta{flex:1; min-width:0;}
-  .item-card-top .name{font-size:14.5px; font-weight:700; color:var(--text); margin-bottom:4px;}
-  .item-card-top .tags{display:flex; flex-wrap:wrap; gap:5px; align-items:center;}
-  .stat-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; padding-top:9px; border-top:1px solid var(--panel-line);}
-  .stat-chip{
-    font-size:11.5px; padding:4px 9px; border-radius:6px;
-    background:#22282a; color:var(--text); border:1px solid var(--panel-line);
+  .chip{
+    font-size:0.72rem;
+    padding:3px 9px;
+    border-radius:20px;
+    background:#1a251c;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
   }
-  .item-card-bottom{margin-top:8px;}
+  .chip.ok{color:var(--herb-green);border-color:var(--herb-green);}
+  .chip.missing{color:var(--health);border-color:var(--health);}
+  .recipe-card .meta-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:0.75rem;
+    color:var(--parchment-dim);
+  }
+  .brew-btn{
+    background:linear-gradient(180deg, var(--copper-bright), var(--copper));
+    border:none;
+    color:#1a1206;
+    font-family:'Lora',serif;
+    font-weight:600;
+    font-size:0.85rem;
+    padding:8px 16px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .brew-btn:disabled{
+    background:#3a3a2e;
+    color:#6b6b5c;
+    cursor:not-allowed;
+  }
+  .lock-note{
+    font-size:0.7rem;
+    color:var(--copper);
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  /* cauldron / active brew */
+  .cauldron-card{
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px;
+    margin-bottom:12px;
+  }
+  .cauldron-card .rname{font-size:1.1rem;color:var(--copper-bright);margin-bottom:10px;}
+  .liquid-bar{
+    height:14px;
+    border-radius:20px;
+    background:#12190f;
+    border:1px solid var(--line);
+    overflow:hidden;
+    margin-bottom:8px;
+    position:relative;
+  }
+  .liquid-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--herb-green), var(--copper-bright));
+    transition:width 1s linear;
+  }
+  .time-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.78rem;
+    color:var(--parchment-dim);
+    font-family:'JetBrains Mono',monospace;
+  }
+  .empty-state{
+    text-align:center;
+    color:var(--parchment-dim);
+    font-size:0.85rem;
+    padding:24px 10px;
+    line-height:1.6;
+  }
+
+  /* potion inventory */
+  .potion-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 14px;
+    margin-bottom:8px;
+  }
+  .potion-item .info .n{font-size:0.95rem;color:var(--parchment);}
+  .potion-item .info .e{font-size:0.78rem;color:var(--herb-green);}
+  .use-btn{
+    background:none;
+    border:1px solid var(--copper);
+    color:var(--copper-bright);
+    padding:6px 12px;
+    border-radius:6px;
+    font-family:'Lora',serif;
+    font-size:0.78rem;
+    cursor:pointer;
+  }
+
+  /* mastery */
+  .mastery-track{
+    display:flex;
+    gap:4px;
+    margin-bottom:10px;
+  }
+  .mastery-track .seg{
+    flex:1;
+    height:8px;
+    border-radius:4px;
+    background:#12190f;
+    border:1px solid var(--line);
+  }
+  .mastery-track .seg.filled{background:linear-gradient(90deg,var(--herb-green),var(--copper-bright));border-color:var(--copper-bright);}
+  .mastery-stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:14px;
+  }
+  .stat-box{
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px 12px;
+  }
+  .stat-box .label{font-size:0.68rem;color:var(--parchment-dim);text-transform:uppercase;letter-spacing:0.05em;}
+  .stat-box .value{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--copper-bright);}
+
+  /* character form */
+  .field-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .field label{font-size:0.72rem;color:var(--parchment-dim);}
+  .field input{
+    background:#12190f;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:8px 10px;
+    color:var(--parchment);
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.9rem;
+  }
+  .field input:focus{outline:1px solid var(--copper-bright);}
+  .save-btn{
+    width:100%;
+    background:var(--bg-panel-raised);
+    border:1px solid var(--copper);
+    color:var(--copper-bright);
+    padding:10px;
+    border-radius:7px;
+    font-family:'Lora',serif;
+    cursor:pointer;
+    margin-top:4px;
+  }
+  .toast{
+    position:fixed;
+    top:16px; left:50%;
+    transform:translateX(-50%);
+    background:var(--copper-bright);
+    color:#1a1206;
+    padding:9px 18px;
+    border-radius:20px;
+    font-size:0.85rem;
+    font-weight:600;
+    z-index:100;
+    box-shadow:0 6px 20px rgba(0,0,0,0.5);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s, transform 0.25s;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(6px);}
+
+  /* garden */
+  .gold-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--bg-panel-raised);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 14px;
+    margin-bottom:14px;
+  }
+  .gold-row .gold-label{font-size:0.78rem;color:var(--parchment-dim);text-transform:uppercase;letter-spacing:0.05em;}
+  .gold-row .gold-value{font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:var(--copper-bright);}
+  .gold-steppers{display:flex;gap:6px;}
+  .gold-steppers button{
+    padding:6px 10px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:#1a251c;
+    color:var(--copper-bright);
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.75rem;
+    cursor:pointer;
+  }
+  .plot-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(140px,1fr));
+    gap:10px;
+  }
+  .plot{
+    background:var(--bg-panel-raised);
+    border:1px dashed var(--line);
+    border-radius:8px;
+    padding:12px;
+    min-height:96px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .plot.growing, .plot.ready{border-style:solid;}
+  .plot.ready{border-color:var(--herb-green);}
+  .plot.locked{opacity:0.35;}
+  .plot .plot-state{font-size:0.72rem;color:var(--parchment-dim);}
+  .plot .plot-herb{font-size:0.92rem;color:var(--parchment);margin:2px 0 6px;}
+  .plot button.plant-btn, .plot button.harvest-btn{
+    background:var(--bg-panel-raised);
+    border:1px solid var(--copper);
+    color:var(--copper-bright);
+    padding:6px 8px;
+    border-radius:6px;
+    font-size:0.75rem;
+    cursor:pointer;
+    font-family:'Lora',serif;
+  }
+  .plot button.harvest-btn{background:linear-gradient(180deg,var(--herb-green),#5b7c4d);color:#0e1608;border:none;font-weight:600;}
+  .seed-picker{
+    margin-top:8px;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    max-height:180px;
+    overflow-y:auto;
+  }
+  .seed-picker button{
+    display:flex;
+    justify-content:space-between;
+    background:#1a251c;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+    padding:6px 8px;
+    border-radius:6px;
+    font-size:0.72rem;
+    cursor:pointer;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .seed-picker button:disabled{opacity:0.35;cursor:not-allowed;}
+  .seed-picker button .sname{font-family:'Lora',serif;color:var(--parchment);}
+
+  @media (prefers-reduced-motion: reduce){
+    .liquid-fill{transition:none;}
+    .toast{transition:none;}
+  }
 </style>
 </head>
 <body>
 
-<header class="top">
-  <h1>⚒️ Werkstatt</h1>
-  <div class="sub">Monster-Materialien veredeln &amp; verschmelzen</div>
+<header>
+  <h1>🜃 Kesselbuch</h1>
+  <div class="sub">Alchemie-Werkstatt</div>
 </header>
 
 <main>
 
-  <!-- LAGER -->
-  <section class="tabpage active" id="page-lager">
+  <!-- KRÄUTER -->
+  <div class="view" id="view-herbs">
     <div class="panel">
-      <div class="panel-head"><h2>Fertige Items</h2><span class="count" id="cnt-items">0</span></div>
-      <div id="list-items"></div>
+      <h2>Kräuterbestand <span class="count-badge" id="herb-total">0 Kräuter</span></h2>
+      <p class="hint">Trag ein, was du gerade besitzt. Das Finden der Kräuter passiert in der echten Welt — hier zählst du nur, was du dabei hast.</p>
+      <div class="herb-grid" id="herb-grid"></div>
     </div>
-    <div class="panel">
-      <div class="panel-head"><h2>Rohmaterialien</h2><span class="count" id="cnt-materials">0</span></div>
-      <div id="list-materials"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><h2>Katalysatoren (Kerne)</h2><span class="count" id="cnt-kerns">0</span></div>
-      <div id="list-kerns"></div>
-      <div class="hint">Kerne werden nicht veredelt. Setze sie beim Schmieden als optionalen Katalysator ein.</div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><h2>Essenzen (veredelt)</h2><span class="count" id="cnt-essences">0</span></div>
-      <div id="list-essences"></div>
-    </div>
-  </section>
+  </div>
 
-  <!-- VEREDELN -->
-  <section class="tabpage" id="page-veredeln">
+  <!-- GARTEN -->
+  <div class="view" id="view-garden">
     <div class="panel">
-      <div class="panel-head"><h2>Veredelungs-Stationen</h2><span class="count" id="veredeln-slots-label"></span></div>
-      <div id="list-refining-active"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><h2>Material wählen</h2></div>
-      <div id="list-materials-pick"></div>
-      <div class="hint">Roh-Material → Essenz. Dauer richtet sich nach Seltenheit, Mastery beschleunigt.</div>
-    </div>
-  </section>
-
-  <!-- SCHMIEDEN -->
-  <section class="tabpage" id="page-schmieden">
-    <div class="panel">
-      <div class="panel-head"><h2>Schmiede-Stationen</h2><span class="count" id="schmieden-slots-label"></span></div>
-      <div id="list-crafting-active"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><h2>Neues Item schmieden</h2></div>
-
-      <label>Kategorie</label>
-      <div class="radiorow" id="craft-cat-row">
-        <label class="opt checked" data-cat="Waffe">⚔️ Waffe</label>
-        <label class="opt" data-cat="Rüstung">🛡️ Rüstung</label>
+      <h2>Garten</h2>
+      <p class="hint">Samen kosten Gold und brauchen Zeit zum Wachsen — auch während du weg bist. Reife Beete musst du selbst ernten.</p>
+      <div class="gold-row">
+        <div>
+          <div class="gold-label">Gold</div>
+          <div class="gold-value" id="gold-value">0</div>
+        </div>
+        <div class="gold-steppers">
+          <button data-gold="-10">−10</button>
+          <button data-gold="-1">−1</button>
+          <button data-gold="1">+1</button>
+          <button data-gold="10">+10</button>
+        </div>
       </div>
-
-      <label>Typ</label>
-      <select id="craft-type"></select>
-
-      <label>Essenzen auswählen (2–<span id="max-inputs-label">3</span>)</label>
-      <div class="select-picker" id="essence-picker"></div>
-
-      <label>Katalysator (optional)</label>
-      <div class="select-picker" id="kern-picker"></div>
-
-      <div id="craft-preview" class="hint"></div>
-
-      <label>Name des Items</label>
-      <input type="text" id="craft-name" placeholder="z.B. Windschneiden-Klinge">
-
-      <div class="modal-actions">
-        <button class="btn-primary btn-block" id="btn-start-craft">Schmieden starten</button>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+        <button class="brew-btn" id="harvest-all-btn">Alles ernten &amp; neu pflanzen</button>
       </div>
-    </div>
-  </section>
-
-  <!-- MASTERY -->
-  <section class="tabpage" id="page-mastery">
-    <div class="panel">
-      <div class="panel-head"><h2>🔥 Veredelungs-Mastery</h2></div>
-      <div class="stat-line"><span>Stufe</span><span class="v" id="mr-level">0 / 10</span></div>
-      <div class="mastery-track" id="mr-track"></div>
-      <div class="stat-line"><span>Zeitersparnis</span><span class="v" id="mr-speed">0%</span></div>
-      <div class="stat-line"><span>Stationen</span><span class="v" id="mr-slots">1</span></div>
-      <div class="stat-line"><span>Abgeschlossene Veredelungen</span><span class="v" id="mr-count">0</span></div>
-      <div class="hint">+1 Stufe je 5 abgeschlossene Veredelungen. Bei Stufe 5 und 8 schaltet sich je eine zusätzliche Station frei.</div>
+      <div class="plot-grid" id="plot-grid"></div>
     </div>
     <div class="panel">
-      <div class="panel-head"><h2>⚒️ Schmiede-Mastery</h2></div>
-      <div class="stat-line"><span>Stufe</span><span class="v" id="mc-level">0 / 10</span></div>
-      <div class="mastery-track" id="mc-track"></div>
-      <div class="stat-line"><span>Zeitersparnis</span><span class="v" id="mc-speed">0%</span></div>
-      <div class="stat-line"><span>Stationen</span><span class="v" id="mc-slots">1</span></div>
-      <div class="stat-line"><span>Max. Essenzen pro Item</span><span class="v" id="mc-maxinputs">3</span></div>
-      <div class="stat-line"><span>Abgeschlossene Schmiedungen</span><span class="v" id="mc-count">0</span></div>
-      <div class="hint">+1 Stufe je 5 abgeschlossene Schmiedungen. Bei Stufe 5 und 8 zusätzliche Station, ab Stufe 6 ein zusätzlicher Essenz-Slot.</div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><h2>Chancen-Übersicht (Schmieden)</h2></div>
-      <div class="hint">
-        <b>Ziel-Seltenheit</b> = gerundeter Durchschnitt der gewählten Essenzen.<br>
-        <b>Stufen-Aufwertung</b> (+1 Seltenheit) — Chancen addieren sich:<br>
-        · Katalysator (Kern): 5–25% je nach Kern-Seltenheit<br>
-        · Reines Element (alle Essenzen gleiches Element): +15%<br>
-        · Jede Essenz über dem Minimum (2) hinaus: +5%<br>
-        <b>Stats</b> nach finaler Seltenheit: Gewöhnlich 1 · Selten 2 · Episch 3 · Legendär 4 · Mystisch 5 Stats, jeweils bis zu 5/10/15/20/25% Bonus (zufällig 1% bis Maximum). Bei Rüstung ist der erste Stat an den Slot gebunden (Schuhe→Geschwindigkeit, Handschuhe→Stärke, Brust→Leben, Beinrüstung→Ausdauer, Helm→Intelligenz/Magie, Schmuck→Intelligenz/Magie/Mana), Rest zufällig. Bei Waffen ist alles zufällig.<br>
-        <b>Fähigkeits-Slots</b> nach finaler Seltenheit: Gewöhnlich 0 · Selten 0–1 · Episch 1–2 · Legendär 1–2 · Mystisch 1–3 (zufällig ausgewürfelt, du bestimmst die Fähigkeiten selbst).
-      </div>
-    </div>
-    <div class="panel">
-      <button class="btn-danger btn-block" id="btn-reset">Speicherstand zurücksetzen</button>
-    </div>
-  </section>
-
-</main>
-
-<nav class="bottom">
-  <button data-page="lager" class="active"><span class="ic">🎒</span>Lager</button>
-  <button data-page="veredeln"><span class="ic">🧪</span>Veredeln</button>
-  <button data-page="schmieden"><span class="ic">⚒️</span>Schmieden</button>
-  <button data-page="mastery"><span class="ic">⭐</span>Mastery</button>
-</nav>
-
-<button class="add-fab" id="btn-add">+</button>
-
-<div class="toast" id="toast"></div>
-
-<!-- ADD MATERIAL MODAL -->
-<div class="modal-backdrop" id="modal-add">
-  <div class="modal">
-    <button class="close-x" id="close-add">✕</button>
-    <h3>Material eintragen</h3>
-
-    <div class="radiorow" id="add-mode-row">
-      <label class="opt checked" data-mode="paste">Liste einfügen</label>
-      <label class="opt" data-mode="single">Einzeln</label>
-    </div>
-
-    <div id="mode-paste">
-      <label>Loot einfügen</label>
-      <textarea id="paste-input" rows="6" placeholder="1x Windschuppe (Gewöhnlich – Wirbeldrache)
-1x Wirbeldrache Kern (Mystisch – Wirbeldrache Kern)"></textarea>
-      <div class="hint">Eine Zeile pro Item, im gewohnten Format. Kerne werden automatisch erkannt (Name endet auf „Kern").</div>
-      <div id="paste-preview"></div>
-      <div class="modal-actions">
-        <button class="btn-ghost" id="btn-parse-paste">Prüfen</button>
-        <button class="btn-primary" id="btn-confirm-paste" disabled>Alle hinzufügen</button>
-      </div>
-    </div>
-
-    <div id="mode-single" style="display:none;">
-      <label>Typ</label>
-      <div class="radiorow" id="add-kind-row">
-        <label class="opt checked"><input type="radio" name="kind" value="material" checked> Material</label>
-        <label class="opt"><input type="radio" name="kind" value="kern"> Kern</label>
-      </div>
-
-      <label>Monster</label>
-      <input type="text" id="add-monster" list="monster-list" placeholder="Name eingeben, z.B. Wirbeldrache">
-      <datalist id="monster-list"></datalist>
-      <div class="hint" id="monster-element-hint"></div>
-
-      <label>Item-Name</label>
-      <input type="text" id="add-name" placeholder="z.B. Windschuppe">
-
-      <label>Seltenheit</label>
-      <select id="add-rarity">
-        <option value="Gewöhnlich">Gewöhnlich</option>
-        <option value="Selten">Selten</option>
-        <option value="Episch">Episch</option>
-        <option value="Legendär">Legendär</option>
-        <option value="Mystisch">Mystisch</option>
-      </select>
-
-      <div class="modal-actions">
-        <button class="btn-primary btn-block" id="btn-confirm-add">Hinzufügen</button>
+      <h2>Gartenmeisterschaft</h2>
+      <div class="mastery-track" id="garden-mastery-track"></div>
+      <p class="hint" id="garden-mastery-text" style="margin-bottom:0;"></p>
+      <div class="mastery-stats">
+        <div class="stat-box"><div class="label">Stufe</div><div class="value" id="gm-level">1 / 10</div></div>
+        <div class="stat-box"><div class="label">Ernten gesamt</div><div class="value" id="gm-harvests">0</div></div>
+        <div class="stat-box"><div class="label">Wachstums-Bonus</div><div class="value" id="gm-speed">−0%</div></div>
+        <div class="stat-box"><div class="label">Beete</div><div class="value" id="gm-plots">4</div></div>
+        <div class="stat-box"><div class="label">Doppelernte-Chance</div><div class="value" id="gm-bonus">0%</div></div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- BRAUEN -->
+  <div class="view" id="view-brew">
+    <div class="panel" id="active-panel">
+      <h2>Am Köcheln</h2>
+      <div id="active-list"></div>
+    </div>
+    <div class="panel">
+      <h2>Rezepte</h2>
+      <p class="hint">Freigeschaltet durch Mastery-Stufe. Ein Sud verbraucht die Kräuter sofort bei Braustart. Bei Elixier- und Booster-Ketten (I/II/III) ersetzt die höhere Stufe die vorherige — sie stapeln sich nicht.</p>
+      <div id="recipe-list"></div>
+    </div>
+  </div>
+
+  <!-- LAGER -->
+  <div class="view" id="view-storage">
+    <div class="panel">
+      <h2>Tank-Lager <span class="count-badge" id="potion-total">0 fertig</span></h2>
+      <p class="hint">Fertige Tränke warten hier auf ihre Verwendung im Spiel.</p>
+      <div id="potion-list"></div>
+    </div>
+  </div>
+
+  <!-- MASTERY -->
+  <div class="view" id="view-mastery">
+    <div class="panel">
+      <h2>Braumeisterschaft</h2>
+      <div class="mastery-track" id="mastery-track"></div>
+      <p class="hint" id="mastery-progress-text" style="margin-bottom:0;"></p>
+      <div class="mastery-stats">
+        <div class="stat-box"><div class="label">Stufe</div><div class="value" id="ms-level">1 / 10</div></div>
+        <div class="stat-box"><div class="label">Sude gesamt</div><div class="value" id="ms-brews">0</div></div>
+        <div class="stat-box"><div class="label">Braudauer-Bonus</div><div class="value" id="ms-speed">−0%</div></div>
+        <div class="stat-box"><div class="label">Gleichzeitige Sude</div><div class="value" id="ms-slots">1</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARAKTER -->
+  <div class="view" id="view-char">
+    <div class="panel">
+      <h2>Charakter-Meta</h2>
+      <p class="hint">Diese Werte kopierst du aus deinem RPG-System. Sie werden nur genutzt, um Effekte wie Prozent-vom-Level anzuzeigen.</p>
+      <div class="field-row">
+        <div class="field"><label>Level</label><input type="number" id="char-level" min="0" placeholder="z.B. 12"></div>
+        <div class="field"><label>EXP aktuell</label><input type="number" id="char-exp" min="0" placeholder="z.B. 4200"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Leben (max)</label><input type="number" id="char-life" min="0" placeholder="z.B. 850"></div>
+        <div class="field"><label>Mana (max)</label><input type="number" id="char-mana" min="0" placeholder="z.B. 400"></div>
+      </div>
+      <button class="save-btn" id="char-save">Werte speichern</button>
+    </div>
+  </div>
+
+</main>
+
+<nav class="tabs">
+  <button data-view="view-herbs" class="active"><span class="icon">🌿</span>Kräuter</button>
+  <button data-view="view-garden"><span class="icon">🌱</span>Garten</button>
+  <button data-view="view-brew"><span class="icon">🧪</span>Brauen</button>
+  <button data-view="view-storage"><span class="icon">🏺</span>Lager</button>
+  <button data-view="view-mastery"><span class="icon">📜</span>Mastery</button>
+  <button data-view="view-char"><span class="icon">🧙</span>Charakter</button>
+</nav>
+
+<div class="toast" id="toast"></div>
 
 <script>
-(function(){
+/* ============ DATA ============ */
+const HERBS = [
+  {id:'silberkraut', name:'Silberkraut', element:'Neutral · Heilung'},
+  {id:'goldwurz', name:'Goldwurz', element:'Neutral · Mana'},
+  {id:'wasserlilie', name:'Wasserlilie', element:'Wasser'},
+  {id:'feuerbluete', name:'Feuerblüte', element:'Feuer'},
+  {id:'eiskristallmoos', name:'Eiskristallmoos', element:'Eis'},
+  {id:'donnerfarn', name:'Donnerfarn', element:'Donner'},
+  {id:'lichtblume', name:'Lichtblume', element:'Licht'},
+  {id:'schattenpilz', name:'Schattenpilz', element:'Schatten'},
+  {id:'windgras', name:'Windgras', element:'Wind'},
+  {id:'erdwurzel', name:'Erdwurzel', element:'Erde'},
+];
 
-// ---------- DATA: 80 Monster -> Element ----------
-const MONSTER_ELEMENT = {
-  "Glutmolch":"fire","Aschenläufer":"fire","Funkenspinne":"fire","Lavakröte":"fire","Glutwolf":"fire",
-  "Aschegeist":"fire","Infernobestie":"fire","Flammenwächter":"fire","Glutbestie":"fire","Infernodrache":"fire",
-  "Frostkäfer":"ice","Eisnadler":"ice","Schneewicht":"ice","Frostwolf":"ice","Eisgolem":"ice",
-  "Frostgeist":"ice","Frostriese":"ice","Kristallhydra":"ice","Ewiger Frost":"ice","Eisphönix":"ice",
-  "Schlammsauger":"water","Nebelqualle":"water","Moosqualle":"water","Tiefenkrabbe":"water","Strudelgeist":"water",
-  "Giftaal":"water","Tiefenwächter":"water","Wellenbrecherin":"water","Meereskoloss":"water","Tiefengeist":"water",
-  "Knisterratte":"thunder","Blitzkäfer":"thunder","Donnerläufer":"thunder","Sturmfalke":"thunder","Blitzeber":"thunder",
-  "Donnerwurm":"thunder","Sturmdrache":"thunder","Gewitterriese":"thunder","Sturmtitan":"thunder","Blitzphönix":"thunder",
-  "Lichtmotte":"light","Sonnenwiesel":"light","Lichtläufer":"light","Lichtfuchs":"light","Sonnenwächter":"light",
-  "Lichtgeist":"light","Lichtkoloss":"light","Lichtprophet":"light","Sonnenprophet":"light","Lichtgott-Fragment":"light",
-  "Dunkelwelpe":"shadow","Schattenmotte":"shadow","Schattenmaus":"shadow","Schattenläufer":"shadow","Schattenwolf":"shadow",
-  "Schattendoppelgänger":"shadow","Schattenfürst":"shadow","Schattenklaue":"shadow","Schattenkönig":"shadow","Schattengeist":"shadow",
-  "Wirbelwiesel":"wind","Windgeist":"wind","Staubläufer":"wind","Wirbeldrache":"wind","Sturmgeist":"wind",
-  "Windbär":"wind","Sturmadler":"wind","Windriese":"wind","Sturmtyphon":"wind","Windgott-Fragment":"wind",
-  "Erdkraller":"earth","Steinbeißer":"earth","Erdmaulwurf":"earth","Steingolem":"earth","Erdkrabbe":"earth",
-  "Erdschlange":"earth","Steinkoloss":"earth","Felstitan":"earth","Erdgott-Fragment":"earth","Steintitan":"earth"
+const MASTERY_THRESHOLDS = [0,5,12,20,30,42,56,72,90,110]; // cumulative brews needed to REACH level i+1
+
+const SEEDS = {
+  silberkraut:      {cost:5,  minutes:15},
+  goldwurz:         {cost:8,  minutes:20},
+  wasserlilie:      {cost:10, minutes:30},
+  windgras:         {cost:10, minutes:25},
+  erdwurzel:        {cost:12, minutes:35},
+  feuerbluete:      {cost:15, minutes:40},
+  donnerfarn:       {cost:15, minutes:45},
+  eiskristallmoos:  {cost:18, minutes:50},
+  lichtblume:       {cost:25, minutes:70},
+  schattenpilz:     {cost:25, minutes:70},
 };
+const MAX_PLOTS = 13;
+const GARDEN_THRESHOLDS = [0,4,10,18,28,40,54,70,88,108]; // cumulative harvests needed to REACH level i+1
+const MAX_POTION_STACK = 5; // Lagerobergrenze pro Tranktyp
 
-const ELEMENT_ICON = {fire:"🔥",ice:"❄️",water:"🌊",thunder:"⚡",light:"☀️",shadow:"🌑",wind:"🌪️",earth:"🌍"};
-const ELEMENT_NAME = {fire:"Feuer",ice:"Eis",water:"Wasser",thunder:"Donner",light:"Licht",shadow:"Schatten",wind:"Wind",earth:"Erde"};
+const RECIPES = [
+  {id:'kleiner_heiltrank', name:'Kleiner Heiltrank', tier:1, category:'Heilung',
+   effect:'Heilt 5% des maximalen Lebens', ingredients:{silberkraut:2}, minutes:25, mastery:1},
+  {id:'heiltrank', name:'Heiltrank', tier:2, category:'Heilung',
+   effect:'Heilt 10% des maximalen Lebens', ingredients:{silberkraut:2, wasserlilie:1}, minutes:40, mastery:1},
+  {id:'manatrank', name:'Manatrank', tier:3, category:'Mana',
+   effect:'Mana regeneriert 25% schneller — 10 Minuten', ingredients:{goldwurz:2, donnerfarn:1}, minutes:50, mastery:2},
+  {id:'grosser_heiltrank', name:'Großer Heiltrank', tier:4, category:'Heilung',
+   effect:'Heilt 20% des maximalen Lebens', ingredients:{silberkraut:3, wasserlilie:2}, minutes:65, mastery:3},
+  {id:'ausdauertrank', name:'Ausdauertrank', tier:5, category:'Ausdauer',
+   effect:'Ausdauerkosten −20% — 15 Minuten', ingredients:{windgras:2, erdwurzel:1}, minutes:70, mastery:3},
+  {id:'allrounder_1', name:'Allrounder-Elixier I', tier:6, category:'Permanent',
+   effect:'Permanent: bei jeder abgeschlossenen Aktivität +1 zusätzlich auf jeden Stat', ingredients:{erdwurzel:2, feuerbluete:2, goldwurz:1, silberkraut:1}, minutes:150, mastery:4},
+  {id:'tagesansporn_1', name:'Tagesansporn-Trank I', tier:7, category:'Booster',
+   effect:'+10% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:2, donnerfarn:1, goldwurz:1}, minutes:110, mastery:4},
+  {id:'manaquelle', name:'Manaquelle', tier:8, category:'Mana',
+   effect:'Mana regeneriert 50% schneller — 15 Minuten', ingredients:{goldwurz:3, donnerfarn:2, lichtblume:1}, minutes:105, mastery:5},
+  {id:'allrounder_2', name:'Allrounder-Elixier II', tier:9, category:'Permanent',
+   effect:'Permanent: +3 zusätzlich auf jeden Stat pro Aktivität (ersetzt Stufe I)', ingredients:{erdwurzel:3, feuerbluete:3, goldwurz:2, eiskristallmoos:1}, minutes:260, mastery:6},
+  {id:'tagesansporn_2', name:'Tagesansporn-Trank II', tier:10, category:'Booster',
+   effect:'+20% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:3, donnerfarn:2, goldwurz:2, windgras:1}, minutes:170, mastery:6},
+  {id:'weisheitselixier', name:'Weisheitselixier', tier:11, category:'EXP',
+   effect:'Gewährt 5% deines aktuellen Levels als EXP', ingredients:{lichtblume:4, silberkraut:3, eiskristallmoos:2}, minutes:210, mastery:7},
+  {id:'unerschoepflichkeit', name:'Unerschöpflichkeit', tier:12, category:'Mana',
+   effect:'Kein Mana-Verbrauch — 5 Minuten', ingredients:{goldwurz:4, donnerfarn:3, lichtblume:2, schattenpilz:1}, minutes:240, mastery:8},
+  {id:'allrounder_3', name:'Allrounder-Elixier III', tier:13, category:'Permanent',
+   effect:'Permanent: +5 zusätzlich auf jeden Stat pro Aktivität (ersetzt Stufe II)', ingredients:{erdwurzel:4, feuerbluete:4, goldwurz:3, eiskristallmoos:2, schattenpilz:1}, minutes:420, mastery:9},
+  {id:'tagesansporn_3', name:'Tagesansporn-Trank III', tier:14, category:'Booster',
+   effect:'+30% mehr Stats & EXP aus Aktivitäten — Rest des Tages', ingredients:{lichtblume:5, donnerfarn:3, goldwurz:3, windgras:2}, minutes:280, mastery:9},
+  {id:'grosses_weisheitselixier', name:'Großes Weisheitselixier', tier:15, category:'EXP',
+   effect:'Gewährt 10% deines aktuellen Levels als EXP', ingredients:{lichtblume:5, eiskristallmoos:4, goldwurz:3, schattenpilz:2}, minutes:400, mastery:10},
+];
 
-const RARITY_ORDER = ["Gewöhnlich","Selten","Episch","Legendär","Mystisch"];
-const RARITY_CLASS = {"Gewöhnlich":"r-gewoehnlich","Selten":"r-selten","Episch":"r-episch","Legendär":"r-legendaer","Mystisch":"r-mystisch"};
-const RARITY_IDX = r => RARITY_ORDER.indexOf(r);
-
-const WEAPON_TYPES = ["Langschwert","Katana","Großschwert","Axt","Bogen","Kampfhandschuhe","Zauberstab","Dolch","Rapier","Peitsche"];
-const ARMOR_SLOTS = ["Helm","Brust","Beinrüstung","Schuhe","Handschuhe","Schmuck"];
-
-const CORE_STATS = ["Stärke","Geschwindigkeit","Leben","Intelligenz","Magie","Ausdauer"];
-const STAT_ICON = {"Stärke":"💪","Geschwindigkeit":"⚡","Leben":"❤️","Intelligenz":"🧠","Magie":"✨","Ausdauer":"🔋","Mana":"🔷"};
-const ARMOR_PRIMARY_STAT = {
-  "Helm":["Intelligenz","Magie"],
-  "Brust":["Leben"],
-  "Beinrüstung":["Ausdauer"],
-  "Schuhe":["Geschwindigkeit"],
-  "Handschuhe":["Stärke"],
-  "Schmuck":["Intelligenz","Magie","Mana"]
-};
-const RARITY_STAT_SLOTS = {0:1, 1:2, 2:3, 3:4, 4:5}; // rarityIdx -> Anzahl Stats
-const RARITY_MAX_PCT = {0:5, 1:10, 2:15, 3:20, 4:25};
-
-function rollItemStats(category, type, rarityIdx){
-  const maxPct = RARITY_MAX_PCT[rarityIdx];
-  const slotCount = RARITY_STAT_SLOTS[rarityIdx];
-  let pool = CORE_STATS.slice();
-  let chosen = [];
-
-  if(category==='Rüstung'){
-    const options = ARMOR_PRIMARY_STAT[type] || pool;
-    const primary = options[Math.floor(Math.random()*options.length)];
-    chosen.push(primary);
-    pool = pool.filter(s=>s!==primary);
-  }
-  // Waffe: komplett zufällig, auch der erste Slot
-
-  while(chosen.length < slotCount && pool.length>0){
-    const i = Math.floor(Math.random()*pool.length);
-    chosen.push(pool[i]);
-    pool.splice(i,1);
-  }
-  return chosen.map(stat => ({stat, pct: 1 + Math.floor(Math.random()*maxPct)}));
-}
-
-const REFINE_HOURS = {"Gewöhnlich":2,"Selten":6,"Episch":16,"Legendär":36,"Mystisch":72};
-const CRAFT_HOURS  = {"Gewöhnlich":4,"Selten":10,"Episch":24,"Legendär":48,"Mystisch":96};
-const CATALYST_CHANCE = {"Gewöhnlich":0.05,"Selten":0.10,"Episch":0.15,"Legendär":0.20,"Mystisch":0.25};
-const H = 3600000;
-
-// ---------- STATE ----------
-const SAVE_KEY = "werkstatt-save-v2";
-let state = loadState();
-
-function defaultState(){
-  return {
-    materials: [], kerns: [], essences: [], items: [],
-    refining: [], crafting: [],
-    masteryRefineCount: 0,
-    masteryCraftCount: 0
-  };
-}
+/* ============ STORAGE ============ */
+const STORE_KEY = 'kesselbuch_v1';
 
 function loadState(){
   try{
-    const raw = localStorage.getItem(SAVE_KEY);
-    if(!raw) return defaultState();
-    const parsed = JSON.parse(raw);
-    return Object.assign(defaultState(), parsed);
-  }catch(e){ return defaultState(); }
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){ console.error('Ladefehler', e); }
+  const herbInv = {};
+  HERBS.forEach(h => herbInv[h.id] = 0);
+  return {
+    herbs: herbInv,
+    activeBrews: [],
+    potions: [],
+    totalBrews: 0,
+    character: {level:'', exp:'', life:'', mana:''},
+    gold: 0,
+    plots: new Array(MAX_PLOTS).fill(null),
+    gardenTotalHarvests: 0
+  };
 }
-function saveState(){ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
-function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function saveState(){
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+}
 
-// ---------- MASTERY ----------
-function masteryLevel(count){ return Math.min(10, Math.floor(count/5)); }
-function speedMult(level){ return 1 - (level*0.05); }
-function refineSlots(level){ return 1 + (level>=5?1:0) + (level>=8?1:0); }
-function craftSlots(level){ return 1 + (level>=5?1:0) + (level>=8?1:0); }
-function maxCraftInputs(level){ return 3 + (level>=6?1:0); }
+let state = loadState();
+HERBS.forEach(h => { if(!(h.id in state.herbs)) state.herbs[h.id] = 0; });
+if(typeof state.gold !== 'number') state.gold = 0;
+if(!Array.isArray(state.plots)) state.plots = new Array(MAX_PLOTS).fill(null);
+while(state.plots.length < MAX_PLOTS) state.plots.push(null);
+if(typeof state.gardenTotalHarvests !== 'number') state.gardenTotalHarvests = 0;
+let openSeedPickerIndex = null;
+if(enforcePotionCap()) saveState();
 
-// ---------- TOAST ----------
-let toastTimer;
-function toast(msg){
+/* ============ MASTERY HELPERS ============ */
+function getMasteryLevel(totalBrews){
+  let level = 1;
+  for(let i=0;i<MASTERY_THRESHOLDS.length;i++){
+    if(totalBrews >= MASTERY_THRESHOLDS[i]) level = i+1;
+  }
+  return level;
+}
+function getBrewsForNextLevel(totalBrews){
+  const level = getMasteryLevel(totalBrews);
+  if(level >= 10) return null;
+  return MASTERY_THRESHOLDS[level]; // threshold to reach level+1
+}
+function getSpeedBonus(level){ return (level-1)*2; } // % reduction
+function getSlots(level){
+  if(level >= 9) return 3;
+  if(level >= 5) return 2;
+  return 1;
+}
+
+/* ============ GARDEN MASTERY HELPERS ============ */
+function getGardenLevel(totalHarvests){
+  let level = 1;
+  for(let i=0;i<GARDEN_THRESHOLDS.length;i++){
+    if(totalHarvests >= GARDEN_THRESHOLDS[i]) level = i+1;
+  }
+  return level;
+}
+function getGardenNextThreshold(totalHarvests){
+  const level = getGardenLevel(totalHarvests);
+  if(level >= 10) return null;
+  return GARDEN_THRESHOLDS[level];
+}
+function getGardenSpeedBonus(level){ return (level-1)*2; } // % reduction, same curve as brewing
+function getGardenPlotCount(level){ return Math.min(MAX_PLOTS, 3 + level); } // level1 = 4 plots ... level10 = 13
+function getGardenVeteranRank(totalHarvests){
+  // Once max mastery (level 10) is reached, harvests keep counting toward a soft "veteran" bonus.
+  const maxLevelThreshold = GARDEN_THRESHOLDS[9]; // harvests needed to reach level 10
+  if(totalHarvests < maxLevelThreshold) return 0;
+  const overflow = totalHarvests - maxLevelThreshold;
+  return Math.min(15, Math.floor(overflow/20)); // +1 rank every 20 harvests past level 10, capped at 15
+}
+function getGardenBonusChance(level, totalHarvests){
+  const base = (level-1)*3; // % chance, caps at 27% at level 10
+  const veteran = level >= 10 ? getGardenVeteranRank(totalHarvests) : 0;
+  return base + veteran; // veteran ranks add +1% each beyond the level-10 cap
+}
+
+/* ============ BREW RESOLUTION (works even after app was closed) ============ */
+function enforcePotionCap(){
+  const groups = {};
+  state.potions.forEach(p => {
+    if(!groups[p.recipeId]) groups[p.recipeId] = [];
+    groups[p.recipeId].push(p);
+  });
+  let trimmed = false;
+  Object.values(groups).forEach(items => {
+    if(items.length > MAX_POTION_STACK){
+      items.sort((a,b) => a.finishedAt - b.finishedAt); // älteste zuerst
+      const overflow = items.slice(0, items.length - MAX_POTION_STACK);
+      const overflowUids = new Set(overflow.map(p => p.uid));
+      state.potions = state.potions.filter(p => !overflowUids.has(p.uid));
+      trimmed = true;
+    }
+  });
+  return trimmed;
+}
+
+function resolveFinishedBrews(){
+  const now = Date.now();
+  const stillActive = [];
+  let finishedAny = false;
+  state.activeBrews.forEach(b => {
+    if(b.endTime <= now){
+      const recipe = RECIPES.find(r => r.id === b.recipeId);
+      state.potions.push({
+        uid: 'p_' + now + '_' + Math.random().toString(36).slice(2,7),
+        recipeId: b.recipeId,
+        finishedAt: b.endTime
+      });
+      state.totalBrews += 1;
+      finishedAny = true;
+    } else {
+      stillActive.push(b);
+    }
+  });
+  state.activeBrews = stillActive;
+  if(finishedAny){
+    enforcePotionCap();
+    saveState();
+  }
+  return finishedAny;
+}
+
+/* ============ RENDER: HERBS ============ */
+function renderHerbs(){
+  const grid = document.getElementById('herb-grid');
+  grid.innerHTML = '';
+  let total = 0;
+  HERBS.forEach(h => {
+    total += state.herbs[h.id];
+    const card = document.createElement('div');
+    card.className = 'herb-card';
+    card.innerHTML = `
+      <div class="name">${h.name}</div>
+      <div class="element">${h.element}</div>
+      <div class="stepper">
+        <button data-herb="${h.id}" data-delta="-1">−</button>
+        <span class="val">${state.herbs[h.id]}</span>
+        <button data-herb="${h.id}" data-delta="1">+</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+  document.getElementById('herb-total').textContent = total + ' Kräuter';
+  grid.querySelectorAll('button[data-herb]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.herb;
+      const delta = parseInt(btn.dataset.delta,10);
+      state.herbs[id] = Math.max(0, state.herbs[id] + delta);
+      saveState();
+      renderHerbs();
+      renderBrewView();
+    });
+  });
+}
+
+/* ============ RENDER: BREW VIEW ============ */
+function formatDuration(ms){
+  if(ms < 0) ms = 0;
+  const totalSec = Math.floor(ms/1000);
+  const h = Math.floor(totalSec/3600);
+  const m = Math.floor((totalSec%3600)/60);
+  const s = totalSec%60;
+  if(h > 0) return `${h}h ${m}m ${s}s`;
+  if(m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
+function renderActiveBrews(){
+  const list = document.getElementById('active-list');
+  if(state.activeBrews.length === 0){
+    list.innerHTML = '<div class="empty-state">Kein Sud köchelt gerade. Wähl unten ein Rezept.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  const now = Date.now();
+  state.activeBrews.forEach(b => {
+    const recipe = RECIPES.find(r => r.id === b.recipeId);
+    const total = b.endTime - b.startTime;
+    const elapsed = Math.min(total, now - b.startTime);
+    const pct = total > 0 ? Math.min(100, (elapsed/total)*100) : 100;
+    const remaining = b.endTime - now;
+    const card = document.createElement('div');
+    card.className = 'cauldron-card';
+    card.innerHTML = `
+      <div class="rname">${recipe.name}</div>
+      <div class="liquid-bar"><div class="liquid-fill" style="width:${pct}%"></div></div>
+      <div class="time-row">
+        <span>${pct.toFixed(0)}%</span>
+        <span>${remaining > 0 ? 'noch ' + formatDuration(remaining) : 'fertig'}</span>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function renderRecipes(){
+  const level = getMasteryLevel(state.totalBrews);
+  const slots = getSlots(level);
+  const speedBonus = getSpeedBonus(level);
+  const list = document.getElementById('recipe-list');
+  list.innerHTML = '';
+  RECIPES.forEach(r => {
+    const locked = r.mastery > level;
+    const card = document.createElement('div');
+    card.className = 'recipe-card' + (locked ? ' locked' : '');
+    const ingredientsHtml = Object.entries(r.ingredients).map(([hid, qty]) => {
+      const herb = HERBS.find(h => h.id === hid);
+      const have = state.herbs[hid] >= qty;
+      return `<span class="chip ${have ? 'ok' : 'missing'}">${herb.name} ×${qty}</span>`;
+    }).join('');
+    const adjustedMinutes = Math.round(r.minutes * (1 - speedBonus/100));
+    const canAfford = Object.entries(r.ingredients).every(([hid,qty]) => state.herbs[hid] >= qty);
+    const slotsFree = state.activeBrews.length < slots;
+    const stock = state.potions.filter(p => p.recipeId === r.id).length;
+    const stockFull = stock >= MAX_POTION_STACK;
+    const canBrew = !locked && canAfford && slotsFree && !stockFull;
+
+    let btnLabel = 'Sud starten';
+    if(locked) btnLabel = 'Gesperrt';
+    else if(stockFull) btnLabel = 'Lager voll (5/5)';
+    else if(!slotsFree) btnLabel = 'Kessel voll';
+    else if(!canAfford) btnLabel = 'Zu wenig Kräuter';
+
+    card.innerHTML = `
+      <div class="top">
+        <span class="rname">${r.name}</span>
+        <span class="rtier">MASTERY ${r.mastery} · ${r.category} · ${stock}/${MAX_POTION_STACK} im Lager</span>
+      </div>
+      <div class="effect">${r.effect}</div>
+      <div class="ingredients">${ingredientsHtml}</div>
+      <div class="meta-row">
+        <span>${locked ? `<span class="lock-note">Mastery ${r.mastery} nötig</span>` : `⏱ ${adjustedMinutes} Min`}</span>
+        <button class="brew-btn" data-recipe="${r.id}" ${canBrew ? '' : 'disabled'}>${btnLabel}</button>
+      </div>`;
+    list.appendChild(card);
+  });
+  list.querySelectorAll('button[data-recipe]').forEach(btn => {
+    btn.addEventListener('click', () => startBrew(btn.dataset.recipe));
+  });
+}
+
+function startBrew(recipeId){
+  const level = getMasteryLevel(state.totalBrews);
+  const slots = getSlots(level);
+  if(state.activeBrews.length >= slots) return;
+  const recipe = RECIPES.find(r => r.id === recipeId);
+  if(recipe.mastery > level) return;
+  const canAfford = Object.entries(recipe.ingredients).every(([hid,qty]) => state.herbs[hid] >= qty);
+  if(!canAfford) return;
+  const stock = state.potions.filter(p => p.recipeId === recipeId).length;
+  if(stock >= MAX_POTION_STACK){ showToast('Lager für diesen Trank ist voll (5/5)'); return; }
+
+  Object.entries(recipe.ingredients).forEach(([hid,qty]) => { state.herbs[hid] -= qty; });
+  const speedBonus = getSpeedBonus(level);
+  const adjustedMinutes = Math.round(recipe.minutes * (1 - speedBonus/100));
+  const start = Date.now();
+  state.activeBrews.push({
+    id: 'b_' + start + '_' + Math.random().toString(36).slice(2,7),
+    recipeId: recipe.id,
+    startTime: start,
+    endTime: start + adjustedMinutes*60*1000
+  });
+  saveState();
+  showToast(recipe.name + ' köchelt jetzt');
+  renderHerbs();
+  renderBrewView();
+}
+
+function renderBrewView(){
+  resolveFinishedBrews();
+  renderActiveBrews();
+  renderRecipes();
+  renderStorage();
+  renderMastery();
+}
+
+/* ============ RENDER: STORAGE ============ */
+function renderStorage(){
+  const list = document.getElementById('potion-list');
+  document.getElementById('potion-total').textContent = state.potions.length + ' fertig';
+  if(state.potions.length === 0){
+    list.innerHTML = '<div class="empty-state">Noch keine Tränke im Lager. Brau etwas!</div>';
+    return;
+  }
+  // gleiche Tränke stapeln statt einzeln aufzulisten
+  const groups = {};
+  state.potions.forEach(p => {
+    if(!groups[p.recipeId]) groups[p.recipeId] = [];
+    groups[p.recipeId].push(p);
+  });
+  const groupEntries = Object.entries(groups).sort((a,b) => {
+    const latestA = Math.max(...a[1].map(p => p.finishedAt));
+    const latestB = Math.max(...b[1].map(p => p.finishedAt));
+    return latestB - latestA; // zuletzt fertiggestellter Stapel zuerst
+  });
+  list.innerHTML = '';
+  groupEntries.forEach(([recipeId, items]) => {
+    const recipe = RECIPES.find(r => r.id === recipeId);
+    const item = document.createElement('div');
+    item.className = 'potion-item';
+    item.innerHTML = `
+      <div class="info">
+        <div class="n">${items.length}× ${recipe.name}</div>
+        <div class="e">${recipe.effect}</div>
+      </div>
+      <button class="use-btn" data-recipe="${recipeId}">Verwenden</button>`;
+    list.appendChild(item);
+  });
+  list.querySelectorAll('button[data-recipe]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const recipeId = btn.dataset.recipe;
+      const idx = state.potions.findIndex(p => p.recipeId === recipeId);
+      if(idx >= 0){
+        state.potions.splice(idx, 1);
+        saveState();
+        renderStorage();
+        showToast('Trank verwendet');
+      }
+    });
+  });
+}
+
+/* ============ GARDEN ============ */
+function renderGold(){
+  document.getElementById('gold-value').textContent = state.gold;
+}
+
+function plantSeed(plotIndex, herbId){
+  const seed = SEEDS[herbId];
+  if(state.gold < seed.cost) { showToast('Nicht genug Gold'); return; }
+  const level = getGardenLevel(state.gardenTotalHarvests);
+  const speedBonus = getGardenSpeedBonus(level);
+  const adjustedMinutes = Math.round(seed.minutes * (1 - speedBonus/100));
+  const start = Date.now();
+  state.gold -= seed.cost;
+  state.plots[plotIndex] = {
+    herbId,
+    plantedAt: start,
+    readyAt: start + adjustedMinutes*60*1000
+  };
+  openSeedPickerIndex = null;
+  saveState();
+  showToast(HERBS.find(h=>h.id===herbId).name + ' gepflanzt');
+  renderGarden();
+}
+
+function harvestPlot(plotIndex){
+  const plot = state.plots[plotIndex];
+  if(!plot || plot.readyAt > Date.now()) return;
+  const herbId = plot.herbId;
+  state.herbs[herbId] += 1;
+  const level = getGardenLevel(state.gardenTotalHarvests);
+  const bonusChance = getGardenBonusChance(level, state.gardenTotalHarvests);
+  let bonus = false;
+  if(Math.random()*100 < bonusChance){
+    state.herbs[herbId] += 1;
+    bonus = true;
+  }
+  state.gardenTotalHarvests += 1;
+  state.plots[plotIndex] = null;
+  saveState();
+  showToast((bonus ? 'Doppelte Ernte: ' : 'Geerntet: ') + HERBS.find(h=>h.id===herbId).name);
+  renderHerbs();
+  renderBrewView();
+  renderGarden();
+}
+
+function harvestAllAndReplant(){
+  const now = Date.now();
+  const level0 = getGardenLevel(state.gardenTotalHarvests);
+  const unlockedCount = getGardenPlotCount(level0);
+  let harvested = 0, bonusCount = 0, replanted = 0;
+
+  for(let i=0;i<unlockedCount;i++){
+    const plot = state.plots[i];
+    if(!plot || plot.readyAt > now) continue;
+
+    const herbId = plot.herbId;
+    state.herbs[herbId] += 1;
+    harvested++;
+    const curLevel = getGardenLevel(state.gardenTotalHarvests);
+    const bonusChance = getGardenBonusChance(curLevel, state.gardenTotalHarvests);
+    if(Math.random()*100 < bonusChance){
+      state.herbs[herbId] += 1;
+      bonusCount++;
+    }
+    state.gardenTotalHarvests += 1;
+    state.plots[i] = null;
+
+    const seed = SEEDS[herbId];
+    if(state.gold >= seed.cost){
+      state.gold -= seed.cost;
+      const lvl = getGardenLevel(state.gardenTotalHarvests);
+      const speedBonus = getGardenSpeedBonus(lvl);
+      const adjustedMinutes = Math.round(seed.minutes * (1 - speedBonus/100));
+      const start = Date.now();
+      state.plots[i] = {
+        herbId,
+        plantedAt: start,
+        readyAt: start + adjustedMinutes*60*1000
+      };
+      replanted++;
+    }
+  }
+
+  if(harvested === 0){ showToast('Keine reifen Beete'); return; }
+  saveState();
+  let msg = `${harvested} geerntet`;
+  if(bonusCount > 0) msg += ` (+${bonusCount} Bonus)`;
+  msg += `, ${replanted} neu gepflanzt`;
+  showToast(msg);
+  renderHerbs();
+  renderBrewView();
+  renderGarden();
+}
+
+document.getElementById('harvest-all-btn').addEventListener('click', harvestAllAndReplant);
+
+function renderPlots(){
+  const grid = document.getElementById('plot-grid');
+  grid.innerHTML = '';
+  const level = getGardenLevel(state.gardenTotalHarvests);
+  const unlockedCount = getGardenPlotCount(level);
+  const now = Date.now();
+  let readyCount = 0;
+
+  for(let i=0;i<unlockedCount;i++){
+    const plot = state.plots[i];
+    const div = document.createElement('div');
+
+    if(!plot){
+      div.className = 'plot';
+      if(openSeedPickerIndex === i){
+        const seedButtons = Object.entries(SEEDS).map(([hid, seed]) => {
+          const herb = HERBS.find(h=>h.id===hid);
+          const afford = state.gold >= seed.cost;
+          return `<button data-plant="${i}" data-herbid="${hid}" ${afford ? '' : 'disabled'}>
+            <span class="sname">${herb.name}</span><span>${seed.cost}g · ${seed.minutes}m</span>
+          </button>`;
+        }).join('');
+        div.innerHTML = `
+          <div class="plot-state">Beet ${i+1}</div>
+          <div class="plot-herb">Leer</div>
+          <div class="seed-picker">${seedButtons}</div>`;
+      } else {
+        div.innerHTML = `
+          <div class="plot-state">Beet ${i+1}</div>
+          <div class="plot-herb">Leer</div>
+          <button class="plant-btn" data-open="${i}">Bepflanzen</button>`;
+      }
+    } else if(plot.readyAt <= now){
+      div.className = 'plot ready';
+      readyCount++;
+      const herb = HERBS.find(h=>h.id===plot.herbId);
+      div.innerHTML = `
+        <div class="plot-state">Bereit</div>
+        <div class="plot-herb">${herb.name}</div>
+        <button class="harvest-btn" data-harvest="${i}">Ernten</button>`;
+    } else {
+      div.className = 'plot growing';
+      const herb = HERBS.find(h=>h.id===plot.herbId);
+      const total = plot.readyAt - plot.plantedAt;
+      const elapsed = Math.min(total, now - plot.plantedAt);
+      const pct = total > 0 ? Math.min(100,(elapsed/total)*100) : 100;
+      div.innerHTML = `
+        <div class="plot-state">Wächst — ${formatDuration(plot.readyAt-now)}</div>
+        <div class="plot-herb">${herb.name}</div>
+        <div class="liquid-bar" style="height:8px;"><div class="liquid-fill" style="width:${pct}%"></div></div>`;
+    }
+    grid.appendChild(div);
+  }
+
+  // locked slots preview
+  for(let i=unlockedCount;i<MAX_PLOTS;i++){
+    const div = document.createElement('div');
+    div.className = 'plot locked';
+    div.innerHTML = `<div class="plot-state">Gesperrt</div><div class="plot-herb">Beet ${i+1}</div>`;
+    grid.appendChild(div);
+  }
+
+  grid.querySelectorAll('button[data-open]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openSeedPickerIndex = parseInt(btn.dataset.open,10);
+      renderPlots();
+    });
+  });
+  grid.querySelectorAll('button[data-plant]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      plantSeed(parseInt(btn.dataset.plant,10), btn.dataset.herbid);
+    });
+  });
+  grid.querySelectorAll('button[data-harvest]').forEach(btn => {
+    btn.addEventListener('click', () => harvestPlot(parseInt(btn.dataset.harvest,10)));
+  });
+
+  const harvestAllBtn = document.getElementById('harvest-all-btn');
+  harvestAllBtn.disabled = readyCount === 0;
+}
+
+function renderGardenMastery(){
+  const level = getGardenLevel(state.gardenTotalHarvests);
+  const track = document.getElementById('garden-mastery-track');
+  track.innerHTML = '';
+  for(let i=1;i<=10;i++){
+    const seg = document.createElement('div');
+    seg.className = 'seg' + (i <= level ? ' filled' : '');
+    track.appendChild(seg);
+  }
+  const nextThreshold = getGardenNextThreshold(state.gardenTotalHarvests);
+  const text = document.getElementById('garden-mastery-text');
+  const veteranRank = getGardenVeteranRank(state.gardenTotalHarvests);
+  if(nextThreshold === null){
+    text.textContent = veteranRank > 0
+      ? `Höchste Gartenmeisterschaft erreicht — Veteranen-Rang ${veteranRank} (alle 20 weiteren Ernten +1% Doppelernte, bis max. +15%).`
+      : 'Höchste Gartenmeisterschaft erreicht — alle Beete freigeschaltet. Weitere Ernten bauen jetzt Veteranen-Ränge für mehr Doppelernte-Chance auf.';
+  } else {
+    text.textContent = `${state.gardenTotalHarvests} von ${nextThreshold} Ernten für Stufe ${level+1}.`;
+  }
+  document.getElementById('gm-level').textContent = level + ' / 10';
+  document.getElementById('gm-harvests').textContent = state.gardenTotalHarvests;
+  document.getElementById('gm-speed').textContent = '−' + getGardenSpeedBonus(level) + '%';
+  document.getElementById('gm-plots').textContent = getGardenPlotCount(level);
+  const chance = getGardenBonusChance(level, state.gardenTotalHarvests);
+  document.getElementById('gm-bonus').textContent = chance + '%' + (veteranRank > 0 ? ` (Vet. ${veteranRank})` : '');
+}
+
+function renderGarden(){
+  renderGold();
+  renderPlots();
+  renderGardenMastery();
+}
+
+document.querySelectorAll('.gold-steppers button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const delta = parseInt(btn.dataset.gold,10);
+    state.gold = Math.max(0, state.gold + delta);
+    saveState();
+    renderGold();
+    renderPlots();
+  });
+});
+
+/* ============ RENDER: MASTERY ============ */
+function renderMastery(){
+  const level = getMasteryLevel(state.totalBrews);
+  const track = document.getElementById('mastery-track');
+  track.innerHTML = '';
+  for(let i=1;i<=10;i++){
+    const seg = document.createElement('div');
+    seg.className = 'seg' + (i <= level ? ' filled' : '');
+    track.appendChild(seg);
+  }
+  const nextThreshold = getBrewsForNextLevel(state.totalBrews);
+  const progressText = document.getElementById('mastery-progress-text');
+  if(nextThreshold === null){
+    progressText.textContent = 'Höchste Braumeisterschaft erreicht — alle Rezepte freigeschaltet.';
+  } else {
+    progressText.textContent = `${state.totalBrews} von ${nextThreshold} Suden für Stufe ${level+1}.`;
+  }
+  document.getElementById('ms-level').textContent = level + ' / 10';
+  document.getElementById('ms-brews').textContent = state.totalBrews;
+  document.getElementById('ms-speed').textContent = '−' + getSpeedBonus(level) + '%';
+  document.getElementById('ms-slots').textContent = getSlots(level);
+}
+
+/* ============ CHARACTER ============ */
+function loadCharacterForm(){
+  const c = state.character || {};
+  document.getElementById('char-level').value = c.level || '';
+  document.getElementById('char-exp').value = c.exp || '';
+  document.getElementById('char-life').value = c.life || '';
+  document.getElementById('char-mana').value = c.mana || '';
+}
+document.getElementById('char-save').addEventListener('click', () => {
+  state.character = {
+    level: document.getElementById('char-level').value,
+    exp: document.getElementById('char-exp').value,
+    life: document.getElementById('char-life').value,
+    mana: document.getElementById('char-mana').value,
+  };
+  saveState();
+  showToast('Charakterwerte gespeichert');
+});
+
+/* ============ TOAST ============ */
+let toastTimer = null;
+function showToast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// ---------- NAV ----------
-document.querySelectorAll('nav.bottom button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav.bottom button').forEach(b=>b.classList.remove('active'));
+/* ============ TABS ============ */
+document.querySelectorAll('nav.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     btn.classList.add('active');
-    document.querySelectorAll('.tabpage').forEach(p=>p.classList.remove('active'));
-    document.getElementById('page-'+btn.dataset.page).classList.add('active');
-    renderAll();
+    document.getElementById(btn.dataset.view).classList.add('active');
   });
 });
 
-// ---------- ADD MATERIAL MODAL ----------
-const modalAdd = document.getElementById('modal-add');
-document.getElementById('btn-add').addEventListener('click', ()=>{
-  document.getElementById('add-monster').value='';
-  document.getElementById('add-name').value='';
-  document.getElementById('monster-element-hint').textContent='';
-  document.getElementById('paste-input').value='';
-  document.getElementById('paste-preview').innerHTML='';
-  document.getElementById('btn-confirm-paste').disabled = true;
-  lastParsed = [];
-  modalAdd.classList.add('open');
-});
-document.getElementById('close-add').addEventListener('click', ()=>modalAdd.classList.remove('open'));
-modalAdd.addEventListener('click', (e)=>{ if(e.target===modalAdd) modalAdd.classList.remove('open'); });
+/* ============ INIT & TICK ============ */
+function fullRender(){
+  renderHerbs();
+  renderBrewView();
+  renderGarden();
+  loadCharacterForm();
+}
+fullRender();
 
-document.querySelectorAll('#add-kind-row .opt').forEach(lbl=>{
-  lbl.addEventListener('click', ()=>{
-    document.querySelectorAll('#add-kind-row .opt').forEach(l=>l.classList.remove('checked'));
-    lbl.classList.add('checked');
-  });
-});
-
-document.querySelectorAll('#add-mode-row .opt').forEach(lbl=>{
-  lbl.addEventListener('click', ()=>{
-    document.querySelectorAll('#add-mode-row .opt').forEach(l=>l.classList.remove('checked'));
-    lbl.classList.add('checked');
-    const mode = lbl.dataset.mode;
-    document.getElementById('mode-paste').style.display = mode==='paste' ? 'block' : 'none';
-    document.getElementById('mode-single').style.display = mode==='single' ? 'block' : 'none';
-  });
-});
-
-const datalist = document.getElementById('monster-list');
-Object.keys(MONSTER_ELEMENT).sort().forEach(name=>{
-  const opt = document.createElement('option');
-  opt.value = name;
-  datalist.appendChild(opt);
-});
-document.getElementById('add-monster').addEventListener('input', (e)=>{
-  const el = MONSTER_ELEMENT[e.target.value.trim()];
-  const hint = document.getElementById('monster-element-hint');
-  hint.textContent = el ? `Element: ${ELEMENT_ICON[el]} ${ELEMENT_NAME[el]}` : 'Kein bekanntes Monster — bitte exakten Namen aus der Liste wählen.';
-});
-
-document.getElementById('btn-confirm-add').addEventListener('click', ()=>{
-  const monster = document.getElementById('add-monster').value.trim();
-  const name = document.getElementById('add-name').value.trim();
-  const rarity = document.getElementById('add-rarity').value;
-  const kind = document.querySelector('#add-kind-row input:checked').value;
-  const element = MONSTER_ELEMENT[monster];
-
-  if(!element){ toast('Bitte gültiges Monster aus der Liste wählen'); return; }
-  if(!name){ toast('Bitte einen Item-Namen eingeben'); return; }
-
-  const entry = {id:uid(), name, kind, rarity, monster, element};
-  if(kind==='kern') state.kerns.push(entry);
-  else state.materials.push(entry);
-
-  saveState();
-  modalAdd.classList.remove('open');
-  toast(`${name} hinzugefügt`);
-  renderAll();
-});
-
-// ---------- PASTE PARSER ----------
-const RARITY_ALIASES = {
-  "gewöhnlich":"Gewöhnlich","gewoehnlich":"Gewöhnlich","selten":"Selten","episch":"Episch",
-  "legendär":"Legendär","legendaer":"Legendär","mystisch":"Mystisch"
-};
-function parsePasteLine(line){
-  const raw = line.trim();
-  if(!raw) return null;
-  const norm = raw.replace(/[–—]/g,'-');
-  const m = norm.match(/^(\d+)\s*x\s+(.+?)\s*\(\s*([^,()]+?)\s*-\s*(.+?)\s*\)\s*$/i);
-  if(!m) return {ok:false, raw, error:'Format nicht erkannt'};
-  const qty = parseInt(m[1],10) || 1;
-  const itemName = m[2].trim();
-  const rarityRaw = m[3].trim().toLowerCase();
-  let monsterRaw = m[4].trim();
-  const rarity = RARITY_ALIASES[rarityRaw];
-  if(!rarity) return {ok:false, raw, error:`Seltenheit „${m[3].trim()}" unbekannt`};
-  let kind = 'material';
-  let monster = monsterRaw;
-  if(/\bKern$/i.test(itemName) || /\bKern$/i.test(monsterRaw)){
-    kind = 'kern';
-    monster = monsterRaw.replace(/\s*Kern\s*$/i,'').trim();
+// re-check every second so progress bars move and finished brews land in storage
+// even if the tab was closed and reopened later (resolved via timestamps, not this interval)
+setInterval(() => {
+  const finished = resolveFinishedBrews();
+  renderActiveBrews();
+  if(finished){
+    renderRecipes();
+    renderStorage();
+    renderMastery();
+    showToast('Ein Sud ist fertig!');
   }
-  const element = MONSTER_ELEMENT[monster];
-  if(!element) return {ok:false, raw, error:`Monster „${monster}" nicht gefunden`};
-  return {ok:true, raw, qty, itemName, rarity, kind, monster, element};
-}
-function parsePasteBlock(text){ return text.split('\n').map(parsePasteLine).filter(r=>r!==null); }
-let lastParsed = [];
-
-document.getElementById('btn-parse-paste').addEventListener('click', ()=>{
-  const text = document.getElementById('paste-input').value;
-  lastParsed = parsePasteBlock(text);
-  const preview = document.getElementById('paste-preview');
-  const confirmBtn = document.getElementById('btn-confirm-paste');
-  if(lastParsed.length===0){ preview.innerHTML=''; confirmBtn.disabled=true; return; }
-  preview.innerHTML = lastParsed.map(r=>{
-    if(r.ok) return `<div class="paste-line ok"><span class="ptxt">✓ ${r.qty}x ${r.itemName} — ${r.rarity} · ${ELEMENT_ICON[r.element]} ${r.monster}${r.kind==='kern'?' (Kern)':''}</span></div>`;
-    return `<div class="paste-line err"><span class="ptxt">✕ ${r.raw || '(leere Zeile)'} — ${r.error}</span></div>`;
-  }).join('');
-  confirmBtn.disabled = !lastParsed.some(r=>r.ok);
-});
-
-document.getElementById('btn-confirm-paste').addEventListener('click', ()=>{
-  let added = 0;
-  lastParsed.forEach(r=>{
-    if(!r.ok) return;
-    for(let i=0;i<r.qty;i++){
-      const entry = {id:uid(), name:r.itemName, kind:r.kind, rarity:r.rarity, monster:r.monster, element:r.element};
-      if(r.kind==='kern') state.kerns.push(entry); else state.materials.push(entry);
-      added++;
-    }
-  });
-  saveState();
-  document.getElementById('paste-input').value='';
-  document.getElementById('paste-preview').innerHTML='';
-  document.getElementById('btn-confirm-paste').disabled = true;
-  lastParsed = [];
-  modalAdd.classList.remove('open');
-  toast(`${added} Item${added===1?'':'s'} hinzugefügt`);
-  renderAll();
-});
-
-// ---------- REFINING ----------
-function startRefine(materialId){
-  const level = masteryLevel(state.masteryRefineCount);
-  const slots = refineSlots(level);
-  if(state.refining.length >= slots){ toast('Alle Veredelungs-Stationen belegt'); return; }
-  const idx = state.materials.findIndex(m=>m.id===materialId);
-  if(idx<0) return;
-  const mat = state.materials[idx];
-  state.materials.splice(idx,1);
-  const durationMs = REFINE_HOURS[mat.rarity]*H*speedMult(level);
-  const now = Date.now();
-  state.refining.push({id:uid(), name:mat.name+" Essenz", rarity:mat.rarity, element:mat.element, monster:mat.monster, startedAt:now, finishAt: now + durationMs});
-  saveState();
-  toast('Veredelung gestartet');
-  renderAll();
-}
-function collectRefine(jobId){
-  const idx = state.refining.findIndex(j=>j.id===jobId);
-  if(idx<0) return;
-  const job = state.refining[idx];
-  if(Date.now() < job.finishAt) return;
-  state.refining.splice(idx,1);
-  state.essences.push({id:uid(), name:job.name, rarity:job.rarity, element:job.element, sourceMonster:job.monster});
-  state.masteryRefineCount++;
-  saveState();
-  toast(`${job.name} fertig veredelt`);
-  renderAll();
-}
-
-// ---------- CRAFTING ----------
-let selectedEssenceIds = new Set();
-let selectedKernId = null;
-let craftCategory = 'Waffe';
-
-document.querySelectorAll('#craft-cat-row .opt').forEach(lbl=>{
-  lbl.addEventListener('click', ()=>{
-    document.querySelectorAll('#craft-cat-row .opt').forEach(l=>l.classList.remove('checked'));
-    lbl.classList.add('checked');
-    craftCategory = lbl.dataset.cat;
-    populateTypeSelect();
-    renderSchmieden();
-  });
-});
-function populateTypeSelect(){
-  const sel = document.getElementById('craft-type');
-  const list = craftCategory==='Waffe' ? WEAPON_TYPES : ARMOR_SLOTS;
-  sel.innerHTML = list.map(t=>`<option value="${t}">${t}</option>`).join('');
-}
-populateTypeSelect();
-
-function craftBaseRarityFromEssences(chosen){
-  const avg = chosen.reduce((s,e)=>s+RARITY_IDX(e.rarity),0)/chosen.length;
-  return Math.min(4, Math.round(avg));
-}
-function craftTierUpChance(chosen, kern){
-  let chance = 0;
-  if(kern) chance += CATALYST_CHANCE[kern.rarity];
-  const elements = new Set(chosen.map(e=>e.element));
-  const pure = elements.size===1;
-  if(pure) chance += 0.15;
-  const extra = Math.max(0, chosen.length-2);
-  chance += extra*0.05;
-  return {chance: Math.min(0.75, chance), pure};
-}
-function rollAbilitySlots(rarityIdx){
-  if(rarityIdx===0) return 0;
-  if(rarityIdx===1) return Math.random()<0.5 ? 1 : 0;
-  if(rarityIdx===2){ return Math.random()<0.3 ? 2 : 1; }
-  if(rarityIdx===3){ return Math.random()<0.5 ? 2 : 1; }
-  if(rarityIdx===4){
-    if(Math.random()<0.6){ return Math.random()<0.4 ? 3 : 2; }
-    return 1;
+  if(openSeedPickerIndex === null){
+    renderPlots(); // updates growth bars / countdowns, ready-state doesn't need a toast since harvest is manual
   }
-  return 0;
-}
+}, 1000);
 
-function computeCraftPreview(){
-  const level = masteryLevel(state.masteryCraftCount);
-  const maxIn = maxCraftInputs(level);
-  document.getElementById('max-inputs-label').textContent = maxIn;
-
-  const chosen = state.essences.filter(e=>selectedEssenceIds.has(e.id));
-  const preview = document.getElementById('craft-preview');
-  const btn = document.getElementById('btn-start-craft');
-
-  if(chosen.length < 2){
-    preview.innerHTML = 'Wähle mindestens 2 Essenzen aus.';
-    btn.disabled = true;
-    return;
-  }
-  const baseIdx = craftBaseRarityFromEssences(chosen);
-  const baseRarity = RARITY_ORDER[baseIdx];
-  const kern = state.kerns.find(k=>k.id===selectedKernId);
-  const {chance, pure} = craftTierUpChance(chosen, kern);
-  const durationH = (CRAFT_HOURS[baseRarity]*speedMult(level));
-
-  let html = `Basis-Ziel-Seltenheit: <b style="color:var(--brass)">${baseRarity}</b><br>`;
-  html += `Aufwertungs-Chance (+1 Stufe): <b style="color:var(--brass)">${Math.round(chance*100)}%</b>${pure?' <i>(reines Element!)</i>':''}<br>`;
-  html += `Schmiedezeit: ~${durationH.toFixed(1)} h`;
-  preview.innerHTML = html;
-
-  btn.disabled = false;
-}
-
-document.getElementById('btn-start-craft').addEventListener('click', ()=>{
-  const level = masteryLevel(state.masteryCraftCount);
-  const slots = craftSlots(level);
-  if(state.crafting.length >= slots){ toast('Alle Schmiede-Stationen belegt'); return; }
-
-  const chosen = state.essences.filter(e=>selectedEssenceIds.has(e.id));
-  if(chosen.length<2){ toast('Mindestens 2 Essenzen wählen'); return; }
-
-  const baseIdx = craftBaseRarityFromEssences(chosen);
-  const baseRarity = RARITY_ORDER[baseIdx];
-  const type = document.getElementById('craft-type').value;
-  const name = document.getElementById('craft-name').value.trim() || `Unbenannte${craftCategory==='Waffe'?'r Waffe':'s Rüstungsteil'}`;
-
-  const kern = state.kerns.find(k=>k.id===selectedKernId);
-  const {chance, pure} = craftTierUpChance(chosen, kern);
-  const elements = Array.from(new Set(chosen.map(e=>e.element)));
-
-  state.essences = state.essences.filter(e=>!selectedEssenceIds.has(e.id));
-  if(kern) state.kerns = state.kerns.filter(k=>k.id!==kern.id);
-
-  const durationMs = CRAFT_HOURS[baseRarity]*H*speedMult(level);
-  const now = Date.now();
-  state.crafting.push({
-    id:uid(), name, category:craftCategory, type, baseRarity, tierUpChance:chance, pure, elements,
-    inputCount: chosen.length,
-    startedAt:now, finishAt: now+durationMs
-  });
-
-  selectedEssenceIds = new Set();
-  selectedKernId = null;
-  document.getElementById('craft-name').value='';
-  saveState();
-  toast('Schmieden gestartet');
-  renderAll();
-});
-
-function collectCraft(jobId){
-  const idx = state.crafting.findIndex(j=>j.id===jobId);
-  if(idx<0) return;
-  const job = state.crafting[idx];
-  if(Date.now() < job.finishAt) return;
-  state.crafting.splice(idx,1);
-
-  let finalIdx = RARITY_IDX(job.baseRarity);
-  const upgraded = Math.random() < job.tierUpChance;
-  if(upgraded) finalIdx = Math.min(4, finalIdx+1);
-  const finalRarity = RARITY_ORDER[finalIdx];
-  const abilitySlots = rollAbilitySlots(finalIdx);
-  const stats = rollItemStats(job.category, job.type, finalIdx);
-
-  state.items.push({
-    id:uid(), name:job.name, category:job.category, type:job.type,
-    rarity:finalRarity, upgraded, elements:job.elements, pure:job.pure,
-    abilitySlots, stats, finishedAt:Date.now()
-  });
-  state.masteryCraftCount++;
-  saveState();
-  toast(upgraded ? `${job.name} fertig — Aufwertung gelungen! (${finalRarity})` : `${job.name} fertiggestellt (${finalRarity})`);
-  renderAll();
-}
-
-// ---------- RENDER HELPERS ----------
-function fmtRemain(ms){
-  if(ms<=0) return 'fertig';
-  const totalSec = Math.floor(ms/1000);
-  const d = Math.floor(totalSec/86400);
-  const h = Math.floor((totalSec%86400)/3600);
-  const m = Math.floor((totalSec%3600)/60);
-  const s = totalSec%60;
-  if(d>0) return `${d}t ${h}h ${m}m`;
-  if(h>0) return `${h}h ${m}m`;
-  if(m>0) return `${m}m ${s}s`;
-  return `${s}s`;
-}
-function tokenHTML({icon, name, rarity, sub, extraTags, actionHTML, color}){
-  return `<div class="token" style="--tokencolor:${color||'var(--brass)'}">
-    <div class="elico">${icon}</div>
-    <div class="meta">
-      <div class="name">${name}</div>
-      <div class="tags"><span class="rarity-badge ${RARITY_CLASS[rarity]}">${rarity}</span>${extraTags||''} ${sub?`<span>${sub}</span>`:''}</div>
-    </div>
-    <div class="action">${actionHTML||''}</div>
-  </div>`;
-}
-function itemCardHTML(it){
-  const elIcons = it.elements.map(e=>ELEMENT_ICON[e]).join(' ');
-  const primaryColor = ELCOLOR[it.elements[0]] || 'var(--brass)';
-  const statChips = (it.stats||[]).map(s=>
-    `<span class="stat-chip">${STAT_ICON[s.stat]||''} ${s.stat} +${s.pct}%</span>`
-  ).join('');
-  return `<div class="item-card" style="--tokencolor:${primaryColor}">
-    <div class="item-card-top">
-      <div class="elico">${elIcons}</div>
-      <div class="meta">
-        <div class="name">${it.name}</div>
-        <div class="tags">
-          <span class="rarity-badge ${RARITY_CLASS[it.rarity]}">${it.rarity}</span>
-          <span class="type-badge">${it.category} · ${it.type}</span>
-          ${it.pure?`<span class="ability-badge">rein</span>`:''}
-          ${it.upgraded?`<span class="ability-badge">↑ aufgewertet</span>`:''}
-        </div>
-      </div>
-    </div>
-    ${statChips ? `<div class="stat-row">${statChips}</div>` : ''}
-    <div class="item-card-bottom">
-      ${it.abilitySlots>0 ? `<span class="ability-badge">🔮 ${it.abilitySlots} Fähigkeits-Slot${it.abilitySlots>1?'s':''}</span>` : `<span class="type-badge">Kein Fähigkeits-Slot</span>`}
-    </div>
-  </div>`;
-}
-const ELCOLOR = {fire:"var(--fire)",ice:"var(--ice)",water:"var(--water)",thunder:"var(--thunder)",light:"var(--light)",shadow:"var(--shadow)",wind:"var(--wind)",earth:"var(--earth)"};
-
-// ---------- RENDER ----------
-function renderLager(){
-  document.getElementById('cnt-items').textContent = state.items.length;
-  document.getElementById('list-items').innerHTML = state.items.length ? state.items.slice().reverse().map(it=>
-    itemCardHTML(it)
-  ).join('') : `<div class="empty">Noch keine Items geschmiedet.</div>`;
-
-  document.getElementById('cnt-materials').textContent = state.materials.length;
-  document.getElementById('list-materials').innerHTML = state.materials.length ? state.materials.map(m=>
-    tokenHTML({icon:ELEMENT_ICON[m.element], name:m.name, rarity:m.rarity, sub:m.monster, color:ELCOLOR[m.element]})
-  ).join('') : `<div class="empty">Noch keine Materialien. Tippe unten rechts auf + zum Eintragen.</div>`;
-
-  document.getElementById('cnt-kerns').textContent = state.kerns.length;
-  document.getElementById('list-kerns').innerHTML = state.kerns.length ? state.kerns.map(k=>
-    tokenHTML({icon:"💠", name:k.name, rarity:k.rarity, sub:k.monster, color:ELCOLOR[k.element]})
-  ).join('') : `<div class="empty">Keine Kerne im Lager.</div>`;
-
-  document.getElementById('cnt-essences').textContent = state.essences.length;
-  document.getElementById('list-essences').innerHTML = state.essences.length ? state.essences.map(e=>
-    tokenHTML({icon:ELEMENT_ICON[e.element], name:e.name, rarity:e.rarity, sub:e.sourceMonster, color:ELCOLOR[e.element]})
-  ).join('') : `<div class="empty">Noch keine Essenzen veredelt.</div>`;
-}
-
-function renderVeredeln(){
-  const level = masteryLevel(state.masteryRefineCount);
-  const slots = refineSlots(level);
-  document.getElementById('veredeln-slots-label').textContent = `${state.refining.length}/${slots} belegt`;
-
-  document.getElementById('list-refining-active').innerHTML = state.refining.length ? state.refining.map(job=>{
-    const remain = job.finishAt - Date.now();
-    const total = job.finishAt - job.startedAt;
-    const pct = Math.min(100, Math.max(0, 100 - (remain/total*100)));
-    const done = remain<=0;
-    return `<div class="token" style="--tokencolor:${ELCOLOR[job.element]}; display:block;">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <div class="elico">${ELEMENT_ICON[job.element]}</div>
-        <div class="meta">
-          <div class="name">${job.name}</div>
-          <div class="tags"><span class="rarity-badge ${RARITY_CLASS[job.rarity]}">${job.rarity}</span> ${job.monster}</div>
-        </div>
-        <div class="action">
-          <button class="btn-primary btn-small" ${done?'':'disabled'} onclick="__collectRefine('${job.id}')">${done?'Abholen':'…'}</button>
-        </div>
-      </div>
-      <div class="pour-bar"><div class="pour-fill" style="width:${pct}%; animation-play-state:${done?'paused':'running'};"></div></div>
-      <div class="timer-row"><span>Veredelung</span><span class="clock">${fmtRemain(remain)}</span></div>
-    </div>`;
-  }).join('') : `<div class="empty">Keine aktive Veredelung.</div>`;
-
-  const canStart = state.refining.length < slots;
-  document.getElementById('list-materials-pick').innerHTML = state.materials.length ? state.materials.map(m=>
-    tokenHTML({
-      icon:ELEMENT_ICON[m.element], name:m.name, rarity:m.rarity, sub:m.monster, color:ELCOLOR[m.element],
-      actionHTML:`<button class="btn-ghost btn-small" ${canStart?'':'disabled'} onclick="__startRefine('${m.id}')">Veredeln</button>`
-    })
-  ).join('') : `<div class="empty">Keine Materialien im Lager.</div>`;
-}
-
-function renderSchmieden(){
-  const level = masteryLevel(state.masteryCraftCount);
-  const slots = craftSlots(level);
-  document.getElementById('schmieden-slots-label').textContent = `${state.crafting.length}/${slots} belegt`;
-
-  document.getElementById('list-crafting-active').innerHTML = state.crafting.length ? state.crafting.map(job=>{
-    const remain = job.finishAt - Date.now();
-    const total = job.finishAt - job.startedAt;
-    const pct = Math.min(100, Math.max(0, 100 - (remain/total*100)));
-    const done = remain<=0;
-    const elIcons = job.elements.map(e=>ELEMENT_ICON[e]).join('');
-    return `<div class="token" style="--tokencolor:${ELCOLOR[job.elements[0]]}; display:block;">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <div class="elico">${elIcons}</div>
-        <div class="meta">
-          <div class="name">${job.name}</div>
-          <div class="tags"><span class="rarity-badge ${RARITY_CLASS[job.baseRarity]}">${job.baseRarity}+</span> <span class="type-badge">${job.category} · ${job.type}</span></div>
-        </div>
-        <div class="action">
-          <button class="btn-primary btn-small" ${done?'':'disabled'} onclick="__collectCraft('${job.id}')">${done?'Abholen':'…'}</button>
-        </div>
-      </div>
-      <div class="pour-bar"><div class="pour-fill" style="width:${pct}%; animation-play-state:${done?'paused':'running'};"></div></div>
-      <div class="timer-row"><span>Schmieden</span><span class="clock">${fmtRemain(remain)}</span></div>
-    </div>`;
-  }).join('') : `<div class="empty">Keine aktive Schmiedung.</div>`;
-
-  const maxIn = maxCraftInputs(level);
-  const picker = document.getElementById('essence-picker');
-  if(state.essences.length===0){
-    picker.innerHTML = `<div class="empty">Keine Essenzen vorhanden — zuerst veredeln.</div>`;
-  }else{
-    picker.innerHTML = state.essences.map(e=>{
-      const checked = selectedEssenceIds.has(e.id);
-      return `<div class="pick-chip ${checked?'checked':''}" onclick="__toggleEssence('${e.id}')">${ELEMENT_ICON[e.element]} ${e.name} <small>(${e.rarity})</small></div>`;
-    }).join('');
-  }
-  const kernPicker = document.getElementById('kern-picker');
-  if(state.kerns.length===0){
-    kernPicker.innerHTML = `<div class="empty">Keine Kerne im Lager.</div>`;
-  }else{
-    kernPicker.innerHTML = state.kerns.map(k=>{
-      const checked = selectedKernId===k.id;
-      return `<div class="pick-chip ${checked?'checked':''}" onclick="__toggleKern('${k.id}')">💠 ${k.name} <small>(${k.rarity})</small></div>`;
-    }).join('');
-  }
-  computeCraftPreview();
-}
-
-window.__toggleEssence = function(id){
-  const level = masteryLevel(state.masteryCraftCount);
-  const maxIn = maxCraftInputs(level);
-  if(selectedEssenceIds.has(id)) selectedEssenceIds.delete(id);
-  else{
-    if(selectedEssenceIds.size >= maxIn){ toast(`Maximal ${maxIn} Essenzen pro Rezept`); return; }
-    selectedEssenceIds.add(id);
-  }
-  renderSchmieden();
-};
-window.__toggleKern = function(id){
-  selectedKernId = (selectedKernId===id) ? null : id;
-  renderSchmieden();
-};
-window.__startRefine = startRefine;
-window.__collectRefine = collectRefine;
-window.__collectCraft = collectCraft;
-
-function renderMastery(){
-  const rl = masteryLevel(state.masteryRefineCount);
-  const cl = masteryLevel(state.masteryCraftCount);
-
-  document.getElementById('mr-level').textContent = `${rl} / 10`;
-  document.getElementById('mr-speed').textContent = `${Math.round((1-speedMult(rl))*100)}%`;
-  document.getElementById('mr-slots').textContent = refineSlots(rl);
-  document.getElementById('mr-count').textContent = `${state.masteryRefineCount} (${state.masteryRefineCount%5}/5 bis nächste Stufe)`;
-  document.getElementById('mr-track').innerHTML = Array.from({length:10}).map((_,i)=>`<div class="mastery-pip${i<rl?' filled':''}"></div>`).join('');
-
-  document.getElementById('mc-level').textContent = `${cl} / 10`;
-  document.getElementById('mc-speed').textContent = `${Math.round((1-speedMult(cl))*100)}%`;
-  document.getElementById('mc-slots').textContent = craftSlots(cl);
-  document.getElementById('mc-maxinputs').textContent = maxCraftInputs(cl);
-  document.getElementById('mc-count').textContent = `${state.masteryCraftCount} (${state.masteryCraftCount%5}/5 bis nächste Stufe)`;
-  document.getElementById('mc-track').innerHTML = Array.from({length:10}).map((_,i)=>`<div class="mastery-pip${i<cl?' filled':''}"></div>`).join('');
-}
-
-document.getElementById('btn-reset').addEventListener('click', ()=>{
-  if(confirm('Wirklich den kompletten Spielstand löschen? Das kann nicht rückgängig gemacht werden.')){
-    state = defaultState();
-    saveState();
-    renderAll();
-    toast('Spielstand zurückgesetzt');
+// also resolve immediately when the tab regains focus (covers long absences)
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible'){
+    fullRender();
   }
 });
-
-function renderAll(){
-  renderLager();
-  renderVeredeln();
-  renderSchmieden();
-  renderMastery();
-}
-
-renderAll();
-setInterval(renderAll, 1000);
-
-})();
 </script>
 </body>
 </html>
